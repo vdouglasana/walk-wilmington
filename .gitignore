@@ -39,4 +39,4 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-data/osm-raw.json
+data/osm-*.json
