@@ -50,7 +50,7 @@ export function Hero() {
       {/* Shade the top (for the menu) and the bottom (for the headline) so the text stays readable */}
       <div
         aria-hidden
-        className="absolute inset-0 bg-[linear-gradient(to_bottom,rgb(0_0_0/0.3)_0%,rgb(0_0_0/0)_14%,rgb(0_0_0/0)_35%,rgb(0_0_0/0.5)_65%,rgb(0_0_0/0.7)_100%)]"
+        className="absolute inset-0 bg-[linear-gradient(to_bottom,rgb(0_0_0/0.55)_0%,rgb(0_0_0/0.25)_9%,rgb(0_0_0/0)_20%,rgb(0_0_0/0)_35%,rgb(0_0_0/0.5)_65%,rgb(0_0_0/0.7)_100%)]"
       />
 
       <motion.div

@@ -15,6 +15,10 @@ type Props = {
   progress?: MotionValue<number>
   className?: string
   title?: string
+  /** The path that's highlighted (others fade back) */
+  activeId?: number | null
+  /** Called when someone hovers or taps a path. Leave out for a static map. */
+  onActivate?: (id: number | null) => void
 }
 
 // When each path draws, as a share of progress
@@ -40,11 +44,17 @@ function MapPath({
   i,
   progress,
   reduce,
+  active,
+  dimmed,
+  onActivate,
 }: {
   p: ProjectedPath
   i: number
   progress?: MotionValue<number>
   reduce: boolean | null
+  active: boolean
+  dimmed: boolean
+  onActivate?: (id: number | null) => void
 }) {
   const start = DRAW_START + i * DRAW_STEP
   const draw = useRange(progress, [start, start + DRAW_LEN], reduce)
@@ -53,14 +63,17 @@ function MapPath({
   const color = `var(--path-${p.id})`
 
   return (
-    <g>
+    <motion.g
+      animate={{ opacity: dimmed ? 0.22 : 1 }}
+      transition={{ duration: 0.25 }}
+    >
       {/* darker casing under the line, like a printed trail map */}
       <motion.path
         d={p.d}
         fill="none"
         stroke="var(--foreground)"
         strokeOpacity={0.18}
-        strokeWidth={8}
+        strokeWidth={active ? 11 : 8}
         vectorEffect="non-scaling-stroke"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -70,12 +83,27 @@ function MapPath({
         d={p.d}
         fill="none"
         stroke={color}
-        strokeWidth={4.5}
+        strokeWidth={active ? 7 : 4.5}
         vectorEffect="non-scaling-stroke"
         strokeLinecap="round"
         strokeLinejoin="round"
         style={{ pathLength: draw, opacity: visible }}
       />
+      {onActivate && (
+        // A wide invisible line on top, so the path is easy to hover or tap
+        <path
+          d={p.d}
+          fill="none"
+          stroke="transparent"
+          strokeWidth={24}
+          vectorEffect="non-scaling-stroke"
+          pointerEvents="stroke"
+          className="cursor-pointer"
+          aria-hidden
+          onPointerEnter={(e) => e.pointerType === "mouse" && onActivate(p.id)}
+          onClick={() => onActivate(p.id)}
+        />
+      )}
       <motion.g style={{ opacity: label }}>
         <circle
           cx={p.labelAt.x}
@@ -96,7 +124,7 @@ function MapPath({
           {p.id}
         </text>
       </motion.g>
-    </g>
+    </motion.g>
   )
 }
 
@@ -150,7 +178,14 @@ function BaseLayer({ map }: { map: ProjectedMap }) {
   )
 }
 
-export function PathMap({ map, progress, className, title }: Props) {
+export function PathMap({
+  map,
+  progress,
+  className,
+  title,
+  activeId = null,
+  onActivate,
+}: Props) {
   const reduce = useReducedMotion()
   const half = map.unitsPerMile / 2
 
@@ -168,9 +203,22 @@ export function PathMap({ map, progress, className, title }: Props) {
     >
       <BaseLayer map={map} />
 
-      {map.paths.map((p, i) => (
-        <MapPath key={p.id} p={p} i={i} progress={progress} reduce={reduce} />
-      ))}
+      {/* The highlighted path is drawn last so it sits on top */}
+      {map.paths
+        .map((p, i) => ({ p, i }))
+        .sort((a, b) => Number(a.p.id === activeId) - Number(b.p.id === activeId))
+        .map(({ p, i }) => (
+          <MapPath
+            key={p.id}
+            p={p}
+            i={i}
+            progress={progress}
+            reduce={reduce}
+            active={p.id === activeId}
+            dimmed={activeId != null && p.id !== activeId}
+            onActivate={onActivate}
+          />
+        ))}
       <Trailheads map={map} progress={progress} reduce={reduce} />
 
       {/* North arrow */}

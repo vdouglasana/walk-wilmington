@@ -1,7 +1,14 @@
 "use client"
 
-import { useRef } from "react"
-import { motion, useScroll } from "motion/react"
+import Link from "next/link"
+import { useRef, useState } from "react"
+import { ArrowRightIcon, XIcon } from "lucide-react"
+import {
+  AnimatePresence,
+  motion,
+  useScroll,
+  useTransform,
+} from "motion/react"
 
 import type { ProjectedMap } from "@/lib/geo"
 import { paths } from "@/lib/paths"
@@ -36,6 +43,13 @@ export function HowItWorks({ map }: { map: ProjectedMap }) {
     target: ref,
     offset: ["start 0.7", "end 0.9"],
   })
+  const [activeId, setActiveId] = useState<number | null>(null)
+  const active = paths.find((p) => p.id === activeId)
+  // Put the details card on the opposite side of the map from the path, so it doesn't cover it
+  const activeGeo = map.paths.find((p) => p.id === activeId)
+  const cardOnTop = activeGeo ? activeGeo.labelAt.y / map.height > 0.5 : false
+  // The "tap a path" hint shows up once the paths have drawn
+  const hintOpacity = useTransform(scrollYProgress, [0.6, 0.7], [0, 1])
 
   return (
     <section aria-labelledby="overview" className="bg-band">
@@ -72,20 +86,105 @@ export function HowItWorks({ map }: { map: ProjectedMap }) {
                 map={map}
                 progress={scrollYProgress}
                 className="absolute inset-0 h-full w-full"
+                activeId={activeId}
+                onActivate={setActiveId}
               />
-              <span className="absolute right-2 bottom-1.5 font-mono text-[9px] text-muted-foreground/80">
+              <span className="pointer-events-none absolute right-2 bottom-1.5 font-mono text-[9px] text-muted-foreground/80">
                 © OpenStreetMap contributors
               </span>
+
+              <AnimatePresence>
+                {!active && (
+                  <motion.span
+                    key="hint"
+                    style={{ opacity: hintOpacity }}
+                    exit={{ opacity: 0 }}
+                    className="pointer-events-none absolute top-2.5 left-2.5 flex items-center gap-1.5 rounded-full bg-card/90 px-2.5 py-1 font-mono text-[10px] text-muted-foreground shadow-sm ring-1 ring-border backdrop-blur-sm"
+                  >
+                    <span className="relative flex size-1.5">
+                      <span className="absolute inset-0 animate-ping rounded-full bg-brand-green motion-reduce:animate-none" />
+                      <span className="relative size-1.5 rounded-full bg-brand-green" />
+                    </span>
+                    Tap a path to explore it
+                  </motion.span>
+                )}
+              </AnimatePresence>
+
+              {/* Details card for the highlighted path */}
+              <AnimatePresence mode="wait">
+                {active && (
+                  <motion.div
+                    key={active.id}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 8 }}
+                    transition={{ type: "spring", stiffness: 420, damping: 34 }}
+                    className={`absolute inset-x-2.5 ${cardOnTop ? "top-2.5" : "bottom-6"} overflow-hidden rounded-lg bg-card/95 shadow-lg ring-1 ring-border backdrop-blur-sm sm:right-auto sm:w-72`}
+                    aria-live="polite"
+                  >
+                    <div className="h-1" style={{ background: `var(--path-${active.id})` }} />
+                    <div className="p-3.5">
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <p className="field-label">Path {active.id} of 5</p>
+                          <p className="mt-1 font-semibold tracking-tight">{active.name}</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setActiveId(null)}
+                          aria-label="Close path details"
+                          className="-m-1 rounded-md p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
+                        >
+                          <XIcon className="size-4" />
+                        </button>
+                      </div>
+                      <p className="mt-1.5 text-sm text-muted-foreground">
+                        {active.from} → {active.to}
+                      </p>
+                      <dl className="mt-3 grid grid-cols-3 gap-2 border-t border-border pt-3 font-mono text-[11px]">
+                        <div>
+                          <dt className="text-muted-foreground">Length</dt>
+                          <dd className="mt-0.5 font-medium">{active.miles.toFixed(1)} mi</dd>
+                        </div>
+                        <div>
+                          <dt className="text-muted-foreground">Walk</dt>
+                          <dd className="mt-0.5 font-medium">{active.minutes} min</dd>
+                        </div>
+                        <div>
+                          <dt className="text-muted-foreground">Surface</dt>
+                          <dd className="mt-0.5 font-medium">{active.surface}</dd>
+                        </div>
+                      </dl>
+                      <Link
+                        href={`/the-paths#${active.slug}`}
+                        className="group mt-3 inline-flex items-center gap-1 text-sm font-medium underline-offset-4 hover:underline"
+                      >
+                        See this path
+                        <ArrowRightIcon className="size-3.5 transition-transform group-hover:translate-x-0.5" />
+                      </Link>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
-            <ul className="mt-3 hidden flex-wrap gap-x-4 gap-y-1.5 sm:flex">
+            <ul className="mt-3 hidden flex-wrap gap-x-1 gap-y-1 sm:flex" aria-label="Paths on the map">
               {paths.map((p) => (
-                <li key={p.id} className="flex items-center gap-1.5 font-mono text-[11px] text-muted-foreground">
-                  <span
-                    aria-hidden
-                    className="h-[3px] w-4 rounded-full"
-                    style={{ background: `var(--path-${p.id})` }}
-                  />
-                  {p.name}
+                <li key={p.id}>
+                  <button
+                    type="button"
+                    onMouseEnter={() => setActiveId(p.id)}
+                    onFocus={() => setActiveId(p.id)}
+                    onClick={() => setActiveId(p.id)}
+                    aria-pressed={activeId === p.id}
+                    className="flex items-center gap-1.5 rounded-md px-1.5 py-1 font-mono text-[11px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground aria-pressed:bg-muted aria-pressed:text-foreground"
+                  >
+                    <span
+                      aria-hidden
+                      className="h-[3px] w-4 rounded-full"
+                      style={{ background: `var(--path-${p.id})` }}
+                    />
+                    {p.name}
+                  </button>
                 </li>
               ))}
             </ul>

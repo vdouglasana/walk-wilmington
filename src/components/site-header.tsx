@@ -75,7 +75,7 @@ export function SiteHeader() {
       className={cn(
         "sticky top-0 z-40 border-b transition-[background-color,border-color,color] duration-300",
         overlay
-          ? "border-transparent bg-transparent text-white"
+          ? "border-transparent bg-transparent text-white [text-shadow:0_1px_10px_rgb(0_0_0/0.45)]"
           : "border-border/70 bg-background/85 backdrop-blur-md supports-[backdrop-filter]:bg-background/70"
       )}
     >
@@ -94,7 +94,7 @@ export function SiteHeader() {
                     className={cn(
                       "relative rounded-md px-2.5 py-1.5 text-sm transition-colors focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none",
                       overlay
-                        ? "text-white/75 hover:text-white"
+                        ? "text-white/90 hover:text-white"
                         : "text-muted-foreground hover:text-foreground",
                       active && (overlay ? "text-white" : "text-foreground")
                     )}
