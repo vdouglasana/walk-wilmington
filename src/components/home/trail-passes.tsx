@@ -19,7 +19,7 @@ export function TrailPasses() {
       <TopoBackground className="absolute inset-0 -z-10 h-full w-full [mask-image:radial-gradient(ellipse_at_center,black_45%,transparent_95%)]" />
       <div className="container-page flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="max-w-2xl">
-          <p className="field-label" id="passes">
+          <p className="field-label scroll-mt-28" id="passes">
             Trail passes
           </p>
           <h2 className="mt-4 text-[clamp(1.9rem,4.4vw,3.3rem)] leading-[1.08] font-medium tracking-[-0.03em] text-balance">

@@ -225,7 +225,7 @@ export function HowItWorks({ map }: { map: ProjectedMap }) {
         </div>
 
         <div ref={stepsRef} className="relative isolate md:order-1">
-        <StepTrail containerRef={stepsRef} />
+        <StepTrail containerRef={stepsRef} nextHref="#passes" />
         <ol>
           {steps.map((s) => (
             <motion.li
