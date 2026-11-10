@@ -20,9 +20,10 @@ import {
  * they are, so it lines up at any screen size.
  */
 
-const WIDTH = 112
-const CX = 56 // the trail's center line (lined up with the badge centers)
-const WIGGLE = 40
+// The trail stays inside the narrow lane under the badges, so it never runs behind text
+const WIDTH = 64
+const CX = 32 // the trail's center line (lined up with the badge centers)
+const WIGGLE = 11
 
 type Layout = { height: number; points: number[]; offsetX: number }
 
@@ -101,22 +102,29 @@ export function StepTrail({ containerRef }: { containerRef: RefObject<HTMLElemen
       style={{ left: offsetX }}
       fill="none"
     >
-      {/* planned route */}
+      {/* the trail bed: a soft, wide band like a worn footpath */}
       <path
         d={d}
         stroke="var(--foreground)"
-        strokeOpacity={0.16}
+        strokeOpacity={0.05}
+        strokeWidth={14}
+        strokeLinecap="round"
+      />
+      {/* planned route: dashed center line */}
+      <path
+        d={d}
+        stroke="var(--foreground)"
+        strokeOpacity={0.2}
         strokeWidth={1.5}
         strokeDasharray="2 6"
         strokeLinecap="round"
       />
-      {/* walked part, drawn by scrolling */}
+      {/* walked part, drawn by scrolling, in the same green as the badges */}
       <motion.path
         ref={walked}
         d={d}
-        stroke="var(--foreground)"
-        strokeOpacity={0.32}
-        strokeWidth={2}
+        stroke="var(--brand-green)"
+        strokeWidth={2.5}
         strokeLinecap="round"
         style={{ pathLength: reduce ? 1 : scrollYProgress }}
       />

@@ -230,22 +230,25 @@ export function HowItWorks({ map }: { map: ProjectedMap }) {
           {steps.map((s) => (
             <motion.li
               key={s.n}
-              className="flex min-h-[55svh] flex-col justify-center border-t border-foreground/10 py-10 md:min-h-[78svh]"
+              // A timeline: the badge sits in a narrow lane on the left (where the trail runs),
+              // and the text sits to its right so the trail never crosses it
+              className="relative grid min-h-[55svh] grid-cols-[2rem_minmax(0,1fr)] content-center gap-x-5 py-10 before:absolute before:top-0 before:right-0 before:left-[3.25rem] before:h-px before:bg-foreground/10 md:min-h-[78svh]"
               initial={{ opacity: 0.25 }}
               whileInView={{ opacity: 1 }}
               viewport={{ amount: 0.6 }}
               transition={{ duration: 0.4 }}
             >
-              <p className="flex items-center gap-2.5">
-                <span data-step-badge className="inline-grid size-8 place-items-center rounded-full bg-brand-green font-mono text-xs font-semibold text-[#14320a]">
-                  {s.n}
-                </span>
-                <span className="field-label">Step {Number(s.n)} of 4</span>
-              </p>
-              <h3 className="mt-3 text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
+              <span
+                data-step-badge
+                className="grid size-8 place-items-center self-center rounded-full bg-brand-green font-mono text-xs font-semibold text-[#14320a] shadow-[0_0_0_4px_var(--band)]"
+              >
+                {s.n}
+              </span>
+              <p className="field-label self-center">Step {Number(s.n)} of 4</p>
+              <h3 className="col-start-2 mt-3 text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
                 {s.title}
               </h3>
-              <p className="mt-4 max-w-md text-lg text-pretty text-muted-foreground">
+              <p className="col-start-2 mt-4 max-w-md text-lg text-pretty text-muted-foreground">
                 {s.body}
               </p>
             </motion.li>
