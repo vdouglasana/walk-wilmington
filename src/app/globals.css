@@ -180,8 +180,3 @@
     @apply mx-auto w-full max-w-6xl px-5 sm:px-8;
   }
 }
-
-/* TEMPORARY test switches (see src/lib/fx.tsx). Outside the layers so they're never dropped. */
-html.fx-off-grain .grain { background-image: none !important; }
-html.fx-off-map [data-fx="basemap"],
-html.fx-off-topo [data-fx="topo"] { display: none !important; }

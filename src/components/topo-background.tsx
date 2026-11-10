@@ -32,7 +32,7 @@ const lines = hills.flatMap((h) =>
   }))
 )
 
-export function TopoBackground({ className, ...rest }: { className?: string; "data-fx"?: string }) {
+export function TopoBackground({ className }: { className?: string }) {
   return (
     <svg
       aria-hidden
@@ -40,7 +40,6 @@ export function TopoBackground({ className, ...rest }: { className?: string; "da
       preserveAspectRatio="xMidYMid slice"
       className={className}
       fill="none"
-      {...rest}
     >
       {lines.map((l, i) => (
         <path

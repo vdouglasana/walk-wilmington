@@ -16,7 +16,7 @@ import { TopoBackground } from "@/components/topo-background"
 export function TrailPasses() {
   return (
     <section aria-labelledby="passes" className="grain relative isolate overflow-hidden bg-paper py-20 sm:py-28">
-      <TopoBackground data-fx="topo" className="absolute inset-0 -z-10 h-full w-full [mask-image:radial-gradient(ellipse_at_center,black_45%,transparent_95%)]" />
+      <TopoBackground className="absolute inset-0 -z-10 h-full w-full [mask-image:radial-gradient(ellipse_at_center,black_45%,transparent_95%)]" />
       <div className="container-page flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="max-w-2xl">
           <p className="field-label scroll-mt-28" id="passes">

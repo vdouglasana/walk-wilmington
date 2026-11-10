@@ -2,11 +2,12 @@
 
 import Link from "next/link"
 import { useEffect, useRef, useState } from "react"
-import { ArrowRightIcon, XIcon } from "lucide-react"
+import { ArrowRightIcon, MousePointerClickIcon, XIcon } from "lucide-react"
 import {
   AnimatePresence,
   motion,
   useMotionValueEvent,
+  useReducedMotion,
   useScroll,
   useTransform,
 } from "motion/react"
@@ -15,7 +16,6 @@ import type { ProjectedMap } from "@/lib/geo"
 import { paths } from "@/lib/paths"
 import { PathMap } from "@/components/path-map"
 import { StepTrail } from "@/components/home/step-trail"
-import { useFxOff } from "@/lib/fx"
 
 const steps = [
   {
@@ -43,8 +43,6 @@ const steps = [
 export function HowItWorks({ map }: { map: ProjectedMap }) {
   const ref = useRef<HTMLDivElement>(null)
   const stepsRef = useRef<HTMLDivElement>(null)
-  const noDraw = useFxOff("draw")
-  const noTrail = useFxOff("trail")
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start 0.7", "end 0.9"],
@@ -73,10 +71,27 @@ export function HowItWorks({ map }: { map: ProjectedMap }) {
     setHoverId(null)
   }
 
-  const activeId = ready ? (hoverId ?? pinnedId) : null
-  const active = paths.find((p) => p.id === activeId)
+  // Once the paths finish drawing, light each one up in turn (1 to 5), one time only,
+  // so people can tell the paths respond to them. No card pops up during this.
+  const reduceMotion = useReducedMotion()
+  const [demoId, setDemoId] = useState<number | null>(null)
+  const demoTimers = useRef<ReturnType<typeof setTimeout>[] | null>(null)
+  useEffect(() => {
+    // Start once; after that it always plays to the end, even if you scroll a little
+    if (!ready || demoTimers.current || reduceMotion) return
+    demoTimers.current = paths.map((p, i) => setTimeout(() => setDemoId(p.id), 450 + i * 420))
+    demoTimers.current.push(setTimeout(() => setDemoId(null), 450 + paths.length * 420))
+  }, [ready, reduceMotion])
+  // Only stop it if the page goes away
+  useEffect(() => () => demoTimers.current?.forEach(clearTimeout), [])
+
+  // The path whose card is showing (hover, or clicked)...
+  const cardId = ready ? (hoverId ?? pinnedId) : null
+  // ...and the path that's lit up on the map and in the key (also during the demo)
+  const activeId = ready ? (cardId ?? demoId) : null
+  const active = paths.find((p) => p.id === cardId)
   // Put the details card on the opposite side of the map from the path, so it doesn't cover it
-  const activeGeo = map.paths.find((p) => p.id === activeId)
+  const activeGeo = map.paths.find((p) => p.id === cardId)
   const cardOnTop = activeGeo ? activeGeo.labelAt.y / map.height > 0.5 : false
   // The "tap a path" hint shows up once the paths have drawn
   const hintOpacity = useTransform(scrollYProgress, [0.6, 0.7], [0, 1])
@@ -114,7 +129,7 @@ export function HowItWorks({ map }: { map: ProjectedMap }) {
             <div className="relative h-[44svh] overflow-hidden rounded-lg map-land ring-1 ring-border md:h-auto md:min-h-0 md:flex-1">
               <PathMap
                 map={map}
-                progress={noDraw ? undefined : scrollYProgress}
+                progress={scrollYProgress}
                 className="absolute inset-0 h-full w-full"
                 activeId={activeId}
                 onHover={ready ? hover : undefined}
@@ -132,10 +147,7 @@ export function HowItWorks({ map }: { map: ProjectedMap }) {
                     exit={{ opacity: 0 }}
                     className="pointer-events-none absolute top-2.5 left-2.5 flex items-center gap-1.5 rounded-full bg-card px-2.5 py-1 font-mono text-[10px] text-muted-foreground shadow-sm ring-1 ring-border"
                   >
-                    <span className="relative flex size-1.5">
-                      <span className="absolute inset-0 animate-ping rounded-full bg-brand-green motion-reduce:animate-none" />
-                      <span className="relative size-1.5 rounded-full bg-brand-green" />
-                    </span>
+                    <MousePointerClickIcon className="size-3.5 text-[color-mix(in_oklch,var(--brand-green)_70%,var(--foreground))]" />
                     Hover or tap a path to explore
                   </motion.span>
                 )}
@@ -228,7 +240,7 @@ export function HowItWorks({ map }: { map: ProjectedMap }) {
         </div>
 
         <div ref={stepsRef} className="relative isolate md:order-1">
-        {!noTrail && <StepTrail containerRef={stepsRef} nextHref="#passes" />}
+        <StepTrail containerRef={stepsRef} nextHref="#passes" />
         <ol>
           {steps.map((s) => (
             <motion.li

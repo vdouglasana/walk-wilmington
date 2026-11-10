@@ -190,7 +190,6 @@ export function PathMap({
         className={className}
         overflow="visible"
         aria-hidden
-        data-fx="basemap"
         style={{ willChange: "transform" }}
       >
         <BaseLayer map={map} />

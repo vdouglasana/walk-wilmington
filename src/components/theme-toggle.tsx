@@ -57,18 +57,19 @@ export function ThemeToggle() {
         {note && `Switched to ${note} mode`}
       </div>
 
+      {/* Slides out to the left of the button, in the colors of the mode you just turned on */}
       <AnimatePresence>
         {note && (
           <motion.div
             key={note}
             aria-hidden
-            initial={{ opacity: 0, y: -6, scale: 0.92 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -4, scale: 0.96, transition: { duration: 0.18 } }}
-            transition={{ type: "spring", stiffness: 500, damping: 32 }}
-            className="absolute top-full right-0 mt-2 flex origin-top-right items-center gap-2 rounded-full bg-foreground py-1.5 pr-3.5 pl-2 text-xs font-medium whitespace-nowrap text-background shadow-lg [text-shadow:none]"
+            initial={{ opacity: 0, x: 10 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 6, transition: { duration: 0.18 } }}
+            transition={{ type: "spring", stiffness: 500, damping: 34 }}
+            className="pointer-events-none absolute top-1/2 right-full mr-2 flex -translate-y-1/2 items-center gap-1.5 rounded-full border border-border bg-card py-1 pr-3 pl-1.5 text-xs font-medium whitespace-nowrap text-foreground shadow-md [text-shadow:none]"
           >
-            <span className="grid size-5 place-items-center rounded-full bg-background/15">
+            <span className="grid size-5 place-items-center rounded-full bg-muted">
               {note === "dark" ? <MoonIcon className="size-3" /> : <SunIcon className="size-3" />}
             </span>
             {note === "dark" ? "Dark mode on" : "Light mode on"}

@@ -9,15 +9,12 @@ import {
   useTransform,
 } from "motion/react"
 
-import { useFxOff } from "@/lib/fx"
-
 const words = ["Let's", "walk,", "Wilmington"]
 const ease = [0.22, 1, 0.36, 1] as const
 
 export function Hero() {
   const ref = useRef<HTMLElement>(null)
-  const noParallax = useFxOff("parallax")
-  const reduce = useReducedMotion() || noParallax
+  const reduce = useReducedMotion()
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
