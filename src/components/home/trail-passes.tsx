@@ -11,10 +11,12 @@ import {
 } from "motion/react"
 
 import { paths, type WalkPath } from "@/lib/paths"
+import { TopoBackground } from "@/components/topo-background"
 
 export function TrailPasses() {
   return (
-    <section aria-labelledby="passes" className="py-20 sm:py-28">
+    <section aria-labelledby="passes" className="relative isolate overflow-hidden bg-paper py-20 sm:py-28">
+      <TopoBackground className="absolute inset-0 -z-10 h-full w-full [mask-image:radial-gradient(ellipse_at_center,black_45%,transparent_95%)]" />
       <div className="container-page flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="max-w-2xl">
           <p className="field-label" id="passes">
@@ -93,20 +95,8 @@ function Ticket({ p }: { p: WalkPath }) {
           <p className="mt-5 font-mono text-4xl leading-none font-semibold tracking-tight">
             0{p.id}
           </p>
-          {/* faint topo lines for texture */}
-          <svg
-            aria-hidden
-            viewBox="0 0 100 60"
-            className="pointer-events-none absolute -right-4 -bottom-6 w-32 opacity-25"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="0.8"
-          >
-            <path d="M5 50c15-18 30-22 45-14s28 6 45-12" />
-            <path d="M5 58c15-18 30-22 45-14s28 6 45-12" />
-            <path d="M5 42c15-18 30-22 45-14s28 6 45-12" />
-            <path d="M5 34c15-18 30-22 45-14s28 6 45-12" />
-          </svg>
+          {/* a small line drawing that's different for each path */}
+          <TicketArt id={p.id} />
         </div>
 
         {/* Main part */}
@@ -130,8 +120,8 @@ function Ticket({ p }: { p: WalkPath }) {
 
         {/* Perforation with notches on both sides */}
         <div className="relative h-0 border-t-2 border-dashed border-border" aria-hidden>
-          <span className="absolute -top-[9px] -left-[9px] size-4 rounded-full bg-background ring-1 ring-border [clip-path:inset(0_0_0_50%)]" />
-          <span className="absolute -top-[9px] -right-[9px] size-4 rounded-full bg-background ring-1 ring-border [clip-path:inset(0_50%_0_0)]" />
+          <span className="absolute -top-[9px] -left-[9px] size-4 rounded-full bg-paper ring-1 ring-border [clip-path:inset(0_0_0_50%)]" />
+          <span className="absolute -top-[9px] -right-[9px] size-4 rounded-full bg-paper ring-1 ring-border [clip-path:inset(0_50%_0_0)]" />
         </div>
 
         {/* Stub */}
@@ -163,4 +153,73 @@ function Ticket({ p }: { p: WalkPath }) {
       </Link>
     </motion.div>
   )
+}
+
+/**
+ * One simple line drawing per path, all in the same style:
+ * 1 North Wilmington: pond ripples (it passes a pond near Lubbers Brook)
+ * 2 Main Street: a road with a center line (the one path along a main road)
+ * 3 Rotary Park: a scatter of trees (it leads to the park's trails)
+ * 4 Butters Row: a switchback trail (it winds behind the buildings)
+ * 5 Yentile-East: a long loop (it loops south and comes back up)
+ */
+function TicketArt({ id }: { id: number }) {
+  const common = {
+    "aria-hidden": true,
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 0.9,
+    strokeLinecap: "round" as const,
+    className: "pointer-events-none absolute -right-3 -bottom-5 w-32 opacity-30",
+    viewBox: "0 0 100 60",
+  }
+  switch (id) {
+    case 1:
+      return (
+        <svg {...common}>
+          {[6, 12, 18, 24, 30].map((r) => (
+            <ellipse key={r} cx="62" cy="40" rx={r * 1.35} ry={r * 0.75} />
+          ))}
+        </svg>
+      )
+    case 2:
+      return (
+        <svg {...common}>
+          <path d="M0 30 L100 18" />
+          <path d="M0 52 L100 40" />
+          <path d="M0 41 L100 29" strokeDasharray="5 4" />
+        </svg>
+      )
+    case 3:
+      return (
+        <svg {...common}>
+          {[
+            [30, 40], [46, 30], [58, 46], [72, 32], [86, 44], [64, 18], [88, 20], [40, 54], [76, 56],
+          ].map(([x, y], i) => (
+            <g key={i}>
+              <circle cx={x} cy={y} r={i % 3 === 0 ? 6 : 4.5} />
+              <circle cx={x} cy={y} r={1} fill="currentColor" />
+            </g>
+          ))}
+        </svg>
+      )
+    case 4:
+      return (
+        <svg {...common}>
+          <path d="M20 58 L80 50 L30 40 L84 30 L36 20 L90 10" strokeLinejoin="round" />
+          <path d="M20 58 L80 50 L30 40 L84 30 L36 20 L90 10" strokeDasharray="1 4" transform="translate(0 4)" />
+        </svg>
+      )
+    default:
+      return (
+        <svg {...common}>
+          <g transform="translate(0 -16)">
+            <path d="M8 22 C30 22 34 56 58 56 C82 56 96 40 90 26 C84 12 62 18 66 30" />
+            <path d="M8 30 C28 30 32 64 58 64" opacity="0.6" />
+            <circle cx="8" cy="22" r="2" fill="currentColor" />
+            <circle cx="66" cy="30" r="2" fill="currentColor" />
+          </g>
+        </svg>
+      )
+  }
 }

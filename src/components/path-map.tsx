@@ -17,8 +17,10 @@ type Props = {
   title?: string
   /** The path that's highlighted (others fade back) */
   activeId?: number | null
-  /** Called when someone hovers or taps a path. Leave out for a static map. */
-  onActivate?: (id: number | null) => void
+  /** Called when the mouse moves onto (id) or off (null) a path */
+  onHover?: (id: number | null) => void
+  /** Called when someone clicks or taps a path. Leave both out for a static map. */
+  onSelect?: (id: number) => void
 }
 
 // When each path draws, as a share of progress
@@ -46,7 +48,6 @@ function MapPath({
   reduce,
   active,
   dimmed,
-  onActivate,
 }: {
   p: ProjectedPath
   i: number
@@ -54,7 +55,6 @@ function MapPath({
   reduce: boolean | null
   active: boolean
   dimmed: boolean
-  onActivate?: (id: number | null) => void
 }) {
   const start = DRAW_START + i * DRAW_STEP
   const draw = useRange(progress, [start, start + DRAW_LEN], reduce)
@@ -89,21 +89,6 @@ function MapPath({
         strokeLinejoin="round"
         style={{ pathLength: draw, opacity: visible }}
       />
-      {onActivate && (
-        // A wide invisible line on top, so the path is easy to hover or tap
-        <path
-          d={p.d}
-          fill="none"
-          stroke="transparent"
-          strokeWidth={24}
-          vectorEffect="non-scaling-stroke"
-          pointerEvents="stroke"
-          className="cursor-pointer"
-          aria-hidden
-          onPointerEnter={(e) => e.pointerType === "mouse" && onActivate(p.id)}
-          onClick={() => onActivate(p.id)}
-        />
-      )}
       <motion.g style={{ opacity: label }}>
         <circle
           cx={p.labelAt.x}
@@ -184,7 +169,8 @@ export function PathMap({
   className,
   title,
   activeId = null,
-  onActivate,
+  onHover,
+  onSelect,
 }: Props) {
   const reduce = useReducedMotion()
   const half = map.unitsPerMile / 2
@@ -203,23 +189,54 @@ export function PathMap({
     >
       <BaseLayer map={map} />
 
-      {/* The highlighted path is drawn last so it sits on top */}
-      {map.paths
-        .map((p, i) => ({ p, i }))
-        .sort((a, b) => Number(a.p.id === activeId) - Number(b.p.id === activeId))
-        .map(({ p, i }) => (
-          <MapPath
+      {map.paths.map((p, i) => (
+        <MapPath
+          key={p.id}
+          p={p}
+          i={i}
+          progress={progress}
+          reduce={reduce}
+          active={p.id === activeId}
+          dimmed={activeId != null && p.id !== activeId}
+        />
+      ))}
+
+      {/* A copy of the highlighted path drawn on top, so it's never hidden under another one.
+          (Moving the real element to the front would break clicks.) */}
+      {activeId != null &&
+        map.paths
+          .filter((p) => p.id === activeId)
+          .map((p) => (
+            <g key={p.id} pointerEvents="none">
+              <path d={p.d} fill="none" stroke="var(--foreground)" strokeOpacity={0.18} strokeWidth={11} vectorEffect="non-scaling-stroke" strokeLinecap="round" strokeLinejoin="round" />
+              <path d={p.d} fill="none" stroke={`var(--path-${p.id})`} strokeWidth={7} vectorEffect="non-scaling-stroke" strokeLinecap="round" strokeLinejoin="round" />
+              <circle cx={p.labelAt.x} cy={p.labelAt.y} r={11} fill={`var(--path-${p.id})`} stroke="var(--background)" strokeWidth={3} />
+              <text x={p.labelAt.x} y={p.labelAt.y} dy="0.35em" textAnchor="middle" className="font-mono text-[11px] font-semibold" fill={p.id === 1 ? "#1a1a1a" : "#fff"}>
+                {p.id}
+              </text>
+            </g>
+          ))}
+
+      <Trailheads map={map} progress={progress} reduce={reduce} />
+
+      {/* Wide invisible lines on top, so each path is easy to hover or tap. Order never changes. */}
+      {onSelect &&
+        map.paths.map((p) => (
+          <path
             key={p.id}
-            p={p}
-            i={i}
-            progress={progress}
-            reduce={reduce}
-            active={p.id === activeId}
-            dimmed={activeId != null && p.id !== activeId}
-            onActivate={onActivate}
+            d={p.d}
+            fill="none"
+            stroke="transparent"
+            strokeWidth={24}
+            vectorEffect="non-scaling-stroke"
+            pointerEvents="stroke"
+            className="cursor-pointer"
+            aria-hidden
+            onPointerEnter={(e) => e.pointerType === "mouse" && onHover?.(p.id)}
+            onPointerLeave={(e) => e.pointerType === "mouse" && onHover?.(null)}
+            onClick={() => onSelect(p.id)}
           />
         ))}
-      <Trailheads map={map} progress={progress} reduce={reduce} />
 
       {/* North arrow */}
       <g

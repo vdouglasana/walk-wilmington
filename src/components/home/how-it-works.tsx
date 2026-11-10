@@ -1,11 +1,12 @@
 "use client"
 
 import Link from "next/link"
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { ArrowRightIcon, XIcon } from "lucide-react"
 import {
   AnimatePresence,
   motion,
+  useMotionValueEvent,
   useScroll,
   useTransform,
 } from "motion/react"
@@ -43,7 +44,31 @@ export function HowItWorks({ map }: { map: ProjectedMap }) {
     target: ref,
     offset: ["start 0.7", "end 0.9"],
   })
-  const [activeId, setActiveId] = useState<number | null>(null)
+  // Hovering shows a path's card; clicking or tapping keeps it open until closed
+  const [hoverId, setHoverId] = useState<number | null>(null)
+  const [pinnedId, setPinnedId] = useState<number | null>(null)
+  // The map only becomes clickable once the paths have finished drawing
+  const [ready, setReady] = useState(false)
+  useMotionValueEvent(scrollYProgress, "change", (v) => setReady(v > 0.6))
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setReady(scrollYProgress.get() > 0.6)
+  }, [scrollYProgress])
+
+  // A short delay before hiding, so you can move the mouse onto the card to click its link
+  const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const hover = (id: number | null) => {
+    if (hideTimer.current) clearTimeout(hideTimer.current)
+    if (id === null) hideTimer.current = setTimeout(() => setHoverId(null), 200)
+    else setHoverId(id)
+  }
+  const select = (id: number) => setPinnedId((cur) => (cur === id ? null : id))
+  const close = () => {
+    setPinnedId(null)
+    setHoverId(null)
+  }
+
+  const activeId = ready ? (hoverId ?? pinnedId) : null
   const active = paths.find((p) => p.id === activeId)
   // Put the details card on the opposite side of the map from the path, so it doesn't cover it
   const activeGeo = map.paths.find((p) => p.id === activeId)
@@ -87,7 +112,8 @@ export function HowItWorks({ map }: { map: ProjectedMap }) {
                 progress={scrollYProgress}
                 className="absolute inset-0 h-full w-full"
                 activeId={activeId}
-                onActivate={setActiveId}
+                onHover={ready ? hover : undefined}
+                onSelect={ready ? select : undefined}
               />
               <span className="pointer-events-none absolute right-2 bottom-1.5 font-mono text-[9px] text-muted-foreground/80">
                 © OpenStreetMap contributors
@@ -105,7 +131,7 @@ export function HowItWorks({ map }: { map: ProjectedMap }) {
                       <span className="absolute inset-0 animate-ping rounded-full bg-brand-green motion-reduce:animate-none" />
                       <span className="relative size-1.5 rounded-full bg-brand-green" />
                     </span>
-                    Tap a path to explore it
+                    Hover or tap a path to explore
                   </motion.span>
                 )}
               </AnimatePresence>
@@ -121,6 +147,8 @@ export function HowItWorks({ map }: { map: ProjectedMap }) {
                     transition={{ type: "spring", stiffness: 420, damping: 34 }}
                     className={`absolute inset-x-2.5 ${cardOnTop ? "top-2.5" : "bottom-6"} overflow-hidden rounded-lg bg-card/95 shadow-lg ring-1 ring-border backdrop-blur-sm sm:right-auto sm:w-72`}
                     aria-live="polite"
+                    onMouseEnter={() => hover(active.id)}
+                    onMouseLeave={() => hover(null)}
                   >
                     <div className="h-1" style={{ background: `var(--path-${active.id})` }} />
                     <div className="p-3.5">
@@ -131,7 +159,7 @@ export function HowItWorks({ map }: { map: ProjectedMap }) {
                         </div>
                         <button
                           type="button"
-                          onClick={() => setActiveId(null)}
+                          onClick={close}
                           aria-label="Close path details"
                           className="-m-1 rounded-md p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
                         >
@@ -172,10 +200,12 @@ export function HowItWorks({ map }: { map: ProjectedMap }) {
                 <li key={p.id}>
                   <button
                     type="button"
-                    onMouseEnter={() => setActiveId(p.id)}
-                    onFocus={() => setActiveId(p.id)}
-                    onClick={() => setActiveId(p.id)}
-                    aria-pressed={activeId === p.id}
+                    onMouseEnter={() => hover(p.id)}
+                    onMouseLeave={() => hover(null)}
+                    onFocus={() => hover(p.id)}
+                    onBlur={() => hover(null)}
+                    onClick={() => select(p.id)}
+                    aria-pressed={pinnedId === p.id}
                     className="flex items-center gap-1.5 rounded-md px-1.5 py-1 font-mono text-[11px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground aria-pressed:bg-muted aria-pressed:text-foreground"
                   >
                     <span
