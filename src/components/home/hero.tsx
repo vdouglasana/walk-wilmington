@@ -1,69 +1,117 @@
 "use client"
 
 import Image from "next/image"
-import { motion } from "motion/react"
+import { useRef } from "react"
+import {
+  motion,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+} from "motion/react"
 
 const words = ["Let's", "walk,", "Wilmington"]
 const ease = [0.22, 1, 0.36, 1] as const
 
 export function Hero() {
+  const ref = useRef<HTMLElement>(null)
+  const reduce = useReducedMotion()
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start start", "end start"],
+  })
+  // The photo drifts and settles slightly as you scroll away (parallax)
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "18%"])
+  const scale = useTransform(scrollYProgress, [0, 1], [1.06, 1.16])
+  const textY = useTransform(scrollYProgress, [0, 1], ["0%", "-30%"])
+  const textOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0])
+
   return (
-    <section className="container-page pt-14 pb-10 sm:pt-20 md:pt-24">
-      <motion.p
-        className="field-label"
+    <section
+      ref={ref}
+      className="relative -mt-14 h-[100svh] min-h-[560px] overflow-hidden bg-neutral-900 text-white"
+    >
+      <motion.div
+        className="absolute inset-0"
+        style={reduce ? undefined : { y, scale }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.6 }}
+        transition={{ duration: 1.2 }}
       >
-        The Walk Wilmington Project
-      </motion.p>
+        <Image
+          src="/images/home-1.jpg"
+          alt="Aerial drone view of Wilmington, MA, with Main Street running through town between houses, plazas, and woods"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-[50%_55%]"
+        />
+      </motion.div>
 
-      <h1 className="mt-5 text-[clamp(3.4rem,12.5vw,11.5rem)] leading-[0.86] font-semibold tracking-[-0.055em]">
-        {words.map((w, i) => (
-          <span key={w} className="inline-block overflow-hidden pb-[0.08em] align-bottom">
-            <motion.span
-              className="inline-block"
-              initial={{ y: "105%" }}
-              animate={{ y: 0 }}
-              transition={{ duration: 0.9, delay: 0.1 + i * 0.09, ease }}
-            >
-              {w}
-            </motion.span>
-            {i < words.length - 1 && <span>&nbsp;</span>}
-          </span>
-        ))}
-      </h1>
+      {/* Shade the top (for the menu) and the bottom (for the headline) so the text stays readable */}
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-[linear-gradient(to_bottom,rgb(0_0_0/0.45)_0%,rgb(0_0_0/0)_22%,rgb(0_0_0/0)_35%,rgb(0_0_0/0.5)_65%,rgb(0_0_0/0.7)_100%)]"
+      />
 
-      <motion.p
-        className="mt-8 max-w-xl text-lg text-pretty text-muted-foreground sm:text-xl"
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7, delay: 0.5, ease }}
+      <motion.div
+        className="container-page relative flex h-full flex-col justify-end pb-10 sm:pb-14"
+        style={reduce ? undefined : { y: textY, opacity: textOpacity }}
       >
-        Wilmington, MA wasn&apos;t built for walking. Here&apos;s how it could be.
-      </motion.p>
+        <motion.p
+          className="font-mono text-[0.72rem] tracking-[0.08em] text-white/80 uppercase"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+        >
+          The Walk Wilmington Project
+        </motion.p>
 
-      <motion.figure
-        className="mt-14 sm:mt-20"
-        initial={{ opacity: 0, y: 24 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, delay: 0.65, ease }}
-      >
-        <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-muted sm:aspect-[21/9]">
-          <Image
-            src="/images/home-1.jpg"
-            alt="Aerial view of Wilmington, MA, with Main Street running through town between houses, plazas, and woods"
-            fill
-            priority
-            sizes="(min-width: 1152px) 1088px, 100vw"
-            className="object-cover object-[50%_60%]"
-          />
+        <h1 className="mt-4 text-[clamp(3.4rem,12.5vw,11.5rem)] leading-[0.86] font-semibold tracking-[-0.055em] [text-shadow:0_2px_30px_rgb(0_0_0/0.25)]">
+          {words.map((w, i) => (
+            <span key={w} className="inline-block overflow-hidden pb-[0.08em] align-bottom">
+              <motion.span
+                className="inline-block"
+                initial={{ y: "105%" }}
+                animate={{ y: 0 }}
+                transition={{ duration: 0.9, delay: 0.35 + i * 0.09, ease }}
+              >
+                {w}
+              </motion.span>
+              {i < words.length - 1 && <span>&nbsp;</span>}
+            </span>
+          ))}
+        </h1>
+
+        <div className="mt-8 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+          <motion.p
+            className="max-w-md text-lg text-pretty text-white/90 sm:text-xl"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.75, ease }}
+          >
+            Wilmington, MA wasn&apos;t built for walking. Here&apos;s how it could be.
+          </motion.p>
+          <motion.div
+            className="flex items-center gap-3 font-mono text-xs text-white/70"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.7, delay: 1 }}
+          >
+            <span>42.546° N, 71.174° W</span>
+            <span aria-hidden className="h-px w-8 bg-white/40" />
+            <span className="flex items-center gap-2">
+              Scroll
+              <span className="relative block h-6 w-px overflow-hidden bg-white/25" aria-hidden>
+                <motion.span
+                  className="absolute inset-x-0 top-0 h-1/2 bg-white"
+                  animate={reduce ? undefined : { y: ["-100%", "200%"] }}
+                  transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+                />
+              </span>
+            </span>
+          </motion.div>
         </div>
-        <figcaption className="mt-3 flex justify-between font-mono text-xs text-muted-foreground">
-          <span>Wilmington from above</span>
-          <span>42.546° N, 71.174° W</span>
-        </figcaption>
-      </motion.figure>
+      </motion.div>
     </section>
   )
 }
