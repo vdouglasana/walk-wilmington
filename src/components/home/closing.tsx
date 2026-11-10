@@ -68,8 +68,8 @@ export function Closing() {
 
 function Stat({ unit, children }: { unit: string; children: React.ReactNode }) {
   return (
-    <div className="flex items-baseline gap-3 border-b border-white/25 py-6 last:border-b-0 sm:block sm:border-b-0 sm:px-8 sm:py-8 sm:first:pl-0">
-      <p className="text-5xl font-semibold tracking-[-0.04em] tabular-nums sm:text-[clamp(2.4rem,4.6vw,3.75rem)]">
+    <div className="flex items-baseline gap-3 border-b border-white/25 py-6 last:border-b-0 sm:block sm:border-b-0 sm:px-6 sm:py-8 sm:first:pl-0 lg:px-8">
+      <p className="text-5xl font-semibold tracking-[-0.04em] tabular-nums sm:text-[clamp(1.9rem,4vw,3.75rem)]">
         {children}
       </p>
       <p className="font-mono text-[0.72rem] tracking-[0.08em] text-white/70 uppercase sm:mt-2">

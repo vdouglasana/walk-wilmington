@@ -3,7 +3,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { MenuIcon } from "lucide-react"
 import { motion, useMotionValueEvent, useScroll, useSpring } from "motion/react"
 
@@ -58,6 +58,11 @@ export function SiteHeader() {
   useMotionValueEvent(scrollY, "change", (y) =>
     setPastHero(y > window.innerHeight - 80)
   )
+  // Also check once on load, in case the page opens already scrolled down
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setPastHero(window.scrollY > window.innerHeight - 80)
+  }, [pathname])
   const overlay = pathname === "/" && !pastHero
   const progress = useSpring(scrollYProgress, {
     stiffness: 200,

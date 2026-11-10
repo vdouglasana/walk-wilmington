@@ -31,7 +31,7 @@ export function Hero() {
       className="relative -mt-14 h-[100svh] min-h-[560px] overflow-hidden bg-neutral-900 text-white"
     >
       <motion.div
-        className="absolute inset-0"
+        className="absolute inset-0 origin-bottom"
         style={reduce ? undefined : { y, scale }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -43,14 +43,14 @@ export function Hero() {
           fill
           priority
           sizes="100vw"
-          className="object-cover object-[50%_55%]"
+          className="object-cover object-[50%_0%]"
         />
       </motion.div>
 
       {/* Shade the top (for the menu) and the bottom (for the headline) so the text stays readable */}
       <div
         aria-hidden
-        className="absolute inset-0 bg-[linear-gradient(to_bottom,rgb(0_0_0/0.45)_0%,rgb(0_0_0/0)_22%,rgb(0_0_0/0)_35%,rgb(0_0_0/0.5)_65%,rgb(0_0_0/0.7)_100%)]"
+        className="absolute inset-0 bg-[linear-gradient(to_bottom,rgb(0_0_0/0.3)_0%,rgb(0_0_0/0)_14%,rgb(0_0_0/0)_35%,rgb(0_0_0/0.5)_65%,rgb(0_0_0/0.7)_100%)]"
       />
 
       <motion.div

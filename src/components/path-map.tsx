@@ -131,6 +131,25 @@ function Trailheads({
   )
 }
 
+/** Streets, woods, parks, and water from OpenStreetMap, drawn under the trails */
+function BaseLayer({ map }: { map: ProjectedMap }) {
+  const b = map.basemap
+  const ns = { vectorEffect: "non-scaling-stroke" as const }
+  return (
+    <g aria-hidden>
+      <path d={b.wetland} className="map-wetland" fillRule="evenodd" />
+      <path d={b.parks} className="map-park" fillRule="evenodd" />
+      <path d={b.woods} className="map-wood" fillRule="evenodd" />
+      <path d={b.water} className="map-water" fillRule="evenodd" />
+      <path d={b.streams} className="map-stream" strokeWidth={1.2} {...ns} />
+      <path d={b.minor} className="map-road-minor" strokeWidth={1.1} strokeLinecap="round" strokeLinejoin="round" {...ns} />
+      <path d={b.major} className="map-road-casing" strokeWidth={4} strokeLinecap="round" strokeLinejoin="round" {...ns} />
+      <path d={b.major} className="map-road-major" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" {...ns} />
+      <path d={b.rail} className="map-rail" strokeWidth={1.4} strokeDasharray="5 3" {...ns} />
+    </g>
+  )
+}
+
 export function PathMap({ map, progress, className, title }: Props) {
   const reduce = useReducedMotion()
   const half = map.unitsPerMile / 2
@@ -139,24 +158,15 @@ export function PathMap({ map, progress, className, title }: Props) {
     <svg
       viewBox={`0 0 ${map.width} ${map.height}`}
       className={className}
+      // Let the basemap spill past the edges so it fills whatever box the map sits in
+      overflow="visible"
       role="img"
       aria-label={
         title ??
         "Map of Wilmington, MA showing the five proposed walking paths and their trailheads"
       }
     >
-      <defs>
-        <pattern id="grid" width="26" height="26" patternUnits="userSpaceOnUse">
-          <path
-            d="M26 0H0V26"
-            fill="none"
-            stroke="var(--foreground)"
-            strokeOpacity={0.06}
-            strokeWidth={1}
-          />
-        </pattern>
-      </defs>
-      <rect width={map.width} height={map.height} fill="url(#grid)" />
+      <BaseLayer map={map} />
 
       {map.paths.map((p, i) => (
         <MapPath key={p.id} p={p} i={i} progress={progress} reduce={reduce} />
@@ -169,8 +179,9 @@ export function PathMap({ map, progress, className, title }: Props) {
         className="font-mono"
         fill="var(--foreground)"
       >
-        <path d="M0 -18 L7 6 L0 1 L-7 6 Z" />
-        <text y={24} textAnchor="middle" className="text-[12px]">
+        <circle r={20} cy={2} fill="var(--card)" fillOpacity={0.85} />
+        <path d="M0 -14 L6 6 L0 2 L-6 6 Z" />
+        <text y={16} textAnchor="middle" className="text-[9px]">
           N
         </text>
       </g>

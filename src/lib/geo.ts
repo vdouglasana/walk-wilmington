@@ -1,4 +1,5 @@
 import { paths } from "./paths"
+import basemap from "./basemap.json"
 
 export type ProjectedPath = {
   id: number
@@ -9,18 +10,32 @@ export type ProjectedPath = {
   labelAt: { x: number; y: number }
 }
 
+export type Basemap = {
+  woods: string
+  parks: string
+  wetland: string
+  water: string
+  streams: string
+  rail: string
+  major: string
+  minor: string
+}
+
 export type ProjectedMap = {
   width: number
   height: number
   paths: ProjectedPath[]
+  basemap: Basemap
   /** how many SVG units one mile takes up */
   unitsPerMile: number
 }
 
+type LngLat = [number, number]
+
 /**
- * Turns the real [lng, lat] coordinates from the KML into SVG coordinates.
- * Uses a simple flat projection (good enough at town scale): longitude is
- * squeezed by cos(latitude) so distances look right.
+ * Turns real [lng, lat] coordinates (from the KML and OpenStreetMap) into SVG
+ * coordinates. Uses a simple flat projection, which is fine at town scale:
+ * longitude is squeezed by cos(latitude) so distances look right.
  */
 export function projectPaths(width = 520, padding = 30): ProjectedMap {
   const all = paths.flatMap((p) => [...p.coords, ...p.trailheads.map((t) => t.coord)])
@@ -37,16 +52,38 @@ export function projectPaths(width = 520, padding = 30): ProjectedMap {
   const scale = (width - padding * 2) / (maxX - minX)
   const height = Math.round((maxY - minY) * scale + padding * 2)
 
-  const project = ([lng, lat]: [number, number]) => ({
+  const project = ([lng, lat]: LngLat) => ({
     x: +((lng * k - minX) * scale + padding).toFixed(1),
     y: +((maxY - lat) * scale + padding).toFixed(1),
   })
+
+  const line = (pts: LngLat[], close = false) =>
+    pts
+      .map((pt, i) => {
+        const { x, y } = project(pt)
+        return `${i ? "L" : "M"}${x} ${y}`
+      })
+      .join("") + (close ? "Z" : "")
+
+  const lines = (list: number[][][]) => list.map((l) => line(l as LngLat[])).join("")
+  const areas = (list: number[][][][]) =>
+    list.map((rings) => rings.map((r) => line(r as LngLat[], true)).join("")).join("")
 
   return {
     width,
     height,
     // 1 degree of latitude is about 69 miles
     unitsPerMile: scale / 69,
+    basemap: {
+      woods: areas(basemap.woods),
+      parks: areas(basemap.parks),
+      wetland: areas(basemap.wetland),
+      water: areas(basemap.water),
+      streams: lines(basemap.streams),
+      rail: lines(basemap.rail),
+      major: lines(basemap.major),
+      minor: lines(basemap.minor),
+    },
     paths: paths.map((p) => {
       const pts = p.coords.map(project)
       const mid = pts[Math.floor(pts.length / 2)] ?? { x: 0, y: 0 }

@@ -27,6 +27,9 @@
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
   --color-paper: var(--paper);
+  --color-band: var(--band);
+  --color-brand-green: var(--brand-green);
+  --color-brand-blue: var(--brand-blue);
   --color-path-1: var(--path-1);
   --color-path-2: var(--path-2);
   --color-path-3: var(--path-3);
@@ -62,6 +65,23 @@
   --ring: oklch(0.6 0.01 70);
   --radius: 0.5rem;
 
+  /* Soft green band for the middle of the page, and the two logo colors */
+  --band: oklch(0.945 0.032 132);
+  --brand-green: #6fcf4a;
+  --brand-blue: #2fa8f0;
+
+  /* Basemap (OpenStreetMap layers) */
+  --map-land: oklch(0.955 0.014 95);
+  --map-wood: oklch(0.86 0.06 135);
+  --map-park: oklch(0.9 0.065 140);
+  --map-wetland: oklch(0.91 0.04 165);
+  --map-water: oklch(0.83 0.07 230);
+  --map-water-line: oklch(0.72 0.09 235);
+  --map-road-minor: oklch(1 0 0);
+  --map-road-major: oklch(1 0 0);
+  --map-road-casing: oklch(0.8 0.03 75);
+  --map-rail: oklch(0.6 0.01 70);
+
   --path-1: #ffd600;
   --path-2: #a52714;
   --path-3: #3949ab;
@@ -90,6 +110,18 @@
   --border: oklch(1 0 0 / 11%);
   --input: oklch(1 0 0 / 16%);
   --ring: oklch(0.6 0.01 70);
+
+  --band: oklch(0.215 0.022 140);
+  --map-land: oklch(0.22 0.008 90);
+  --map-wood: oklch(0.3 0.045 140);
+  --map-park: oklch(0.32 0.05 145);
+  --map-wetland: oklch(0.28 0.03 170);
+  --map-water: oklch(0.36 0.06 235);
+  --map-water-line: oklch(0.5 0.08 235);
+  --map-road-minor: oklch(0.34 0.008 80);
+  --map-road-major: oklch(0.5 0.02 80);
+  --map-road-casing: oklch(0.18 0.006 70);
+  --map-rail: oklch(0.55 0.01 70);
 
   /* lifted slightly so the darker path colors still read on a dark page */
   --path-2: #d2493a;
@@ -145,6 +177,17 @@
   .field-label {
     @apply font-mono text-[0.72rem] tracking-[0.08em] text-muted-foreground uppercase;
   }
+  /* Basemap layers (classes so the colors switch with light/dark mode) */
+  .map-land { background-color: var(--map-land); }
+  .map-wetland { fill: var(--map-wetland); }
+  .map-park { fill: var(--map-park); }
+  .map-wood { fill: var(--map-wood); }
+  .map-water { fill: var(--map-water); }
+  .map-stream { fill: none; stroke: var(--map-water-line); }
+  .map-road-minor { fill: none; stroke: var(--map-road-minor); }
+  .map-road-casing { fill: none; stroke: var(--map-road-casing); }
+  .map-road-major { fill: none; stroke: var(--map-road-major); }
+  .map-rail { fill: none; stroke: var(--map-rail); }
   .container-page {
     @apply mx-auto w-full max-w-6xl px-5 sm:px-8;
   }
