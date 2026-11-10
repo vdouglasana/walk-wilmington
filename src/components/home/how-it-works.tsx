@@ -14,6 +14,7 @@ import {
 import type { ProjectedMap } from "@/lib/geo"
 import { paths } from "@/lib/paths"
 import { PathMap } from "@/components/path-map"
+import { StepTrail } from "@/components/home/step-trail"
 
 const steps = [
   {
@@ -40,6 +41,7 @@ const steps = [
 
 export function HowItWorks({ map }: { map: ProjectedMap }) {
   const ref = useRef<HTMLDivElement>(null)
+  const stepsRef = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start 0.7", "end 0.9"],
@@ -77,7 +79,7 @@ export function HowItWorks({ map }: { map: ProjectedMap }) {
   const hintOpacity = useTransform(scrollYProgress, [0.6, 0.7], [0, 1])
 
   return (
-    <section aria-labelledby="overview" className="bg-band">
+    <section aria-labelledby="overview" className="overflow-x-clip bg-band">
      <div className="container-page py-20 sm:py-28">
       <div className="max-w-3xl">
         <p className="field-label flex items-center gap-2" id="overview">
@@ -222,7 +224,9 @@ export function HowItWorks({ map }: { map: ProjectedMap }) {
           </div>
         </div>
 
-        <ol className="md:order-1">
+        <div ref={stepsRef} className="relative isolate md:order-1">
+        <StepTrail containerRef={stepsRef} />
+        <ol>
           {steps.map((s) => (
             <motion.li
               key={s.n}
@@ -233,7 +237,7 @@ export function HowItWorks({ map }: { map: ProjectedMap }) {
               transition={{ duration: 0.4 }}
             >
               <p className="flex items-center gap-2.5">
-                <span className="inline-grid size-8 place-items-center rounded-full bg-brand-green font-mono text-xs font-semibold text-[#14320a]">
+                <span data-step-badge className="inline-grid size-8 place-items-center rounded-full bg-brand-green font-mono text-xs font-semibold text-[#14320a]">
                   {s.n}
                 </span>
                 <span className="field-label">Step {Number(s.n)} of 4</span>
@@ -247,6 +251,7 @@ export function HowItWorks({ map }: { map: ProjectedMap }) {
             </motion.li>
           ))}
         </ol>
+        </div>
       </div>
      </div>
     </section>
