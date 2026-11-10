@@ -1,5 +1,6 @@
 "use client"
 
+import { memo } from "react"
 import {
   motion,
   useReducedMotion,
@@ -144,8 +145,12 @@ function Trailheads({
   )
 }
 
-/** Streets, woods, parks, and water from OpenStreetMap, drawn under the trails */
-function BaseLayer({ map }: { map: ProjectedMap }) {
+/**
+ * Streets, woods, parks, and water from OpenStreetMap, drawn under the trails.
+ * It never changes, so it's memoized and lives in its own <svg> layer: the browser
+ * draws it once instead of redrawing thousands of street lines on every scroll frame.
+ */
+const BaseLayer = memo(function BaseLayer({ map }: { map: ProjectedMap }) {
   const b = map.basemap
   const ns = { vectorEffect: "non-scaling-stroke" as const }
   return (
@@ -161,7 +166,7 @@ function BaseLayer({ map }: { map: ProjectedMap }) {
       <path d={b.rail} className="map-rail" strokeWidth={1.4} strokeDasharray="5 3" {...ns} />
     </g>
   )
-}
+})
 
 export function PathMap({
   map,
@@ -175,11 +180,26 @@ export function PathMap({
   const reduce = useReducedMotion()
   const half = map.unitsPerMile / 2
 
+  const box = `0 0 ${map.width} ${map.height}`
+
   return (
-    <svg
-      viewBox={`0 0 ${map.width} ${map.height}`}
+    <>
+      {/* Bottom layer: the basemap (static) */}
+      <svg
+        viewBox={box}
+        className={className}
+        overflow="visible"
+        aria-hidden
+        style={{ willChange: "transform" }}
+      >
+        <BaseLayer map={map} />
+      </svg>
+
+      {/* Top layer: the trails, which draw as you scroll. Same size and viewBox, so they line up. */}
+      <svg
+      viewBox={box}
       className={className}
-      // Let the basemap spill past the edges so it fills whatever box the map sits in
+      // Let things spill past the edges so the map fills whatever box it sits in
       overflow="visible"
       role="img"
       aria-label={
@@ -187,8 +207,6 @@ export function PathMap({
         "Map of Wilmington, MA showing the five proposed walking paths and their trailheads"
       }
     >
-      <BaseLayer map={map} />
-
       {map.paths.map((p, i) => (
         <MapPath
           key={p.id}
@@ -264,5 +282,6 @@ export function PathMap({
         </text>
       </g>
     </svg>
+    </>
   )
 }

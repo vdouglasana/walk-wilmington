@@ -79,7 +79,7 @@ export function HowItWorks({ map }: { map: ProjectedMap }) {
   const hintOpacity = useTransform(scrollYProgress, [0.6, 0.7], [0, 1])
 
   return (
-    <section aria-labelledby="overview" className="overflow-x-clip bg-band">
+    <section aria-labelledby="overview" className="grain overflow-x-clip bg-band">
      <div className="container-page py-20 sm:py-28">
       <div className="max-w-3xl">
         <p className="field-label flex items-center gap-2" id="overview">
@@ -102,7 +102,7 @@ export function HowItWorks({ map }: { map: ProjectedMap }) {
         className="mt-16 grid gap-x-16 md:mt-24 md:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]"
       >
         {/* Map: sticky so it stays put while the steps scroll past */}
-        <div className="sticky top-14 z-10 -mx-5 bg-band/95 px-5 pt-3 pb-4 backdrop-blur-sm sm:-mx-8 sm:px-8 md:order-2 md:top-24 md:mx-0 md:h-[calc(100svh-8rem)] md:bg-transparent md:p-0 md:backdrop-blur-none">
+        <div className="sticky top-14 z-10 -mx-5 bg-band px-5 pt-3 pb-4 sm:-mx-8 sm:px-8 md:order-2 md:top-24 md:mx-0 md:h-[calc(100svh-8rem)] md:bg-transparent md:p-0">
           <div className="flex h-full flex-col rounded-xl border border-border bg-paper p-3 sm:p-5">
             <div className="flex items-center justify-between pb-2">
               <span className="field-label">Wilmington, MA</span>
@@ -127,7 +127,7 @@ export function HowItWorks({ map }: { map: ProjectedMap }) {
                     key="hint"
                     style={{ opacity: hintOpacity }}
                     exit={{ opacity: 0 }}
-                    className="pointer-events-none absolute top-2.5 left-2.5 flex items-center gap-1.5 rounded-full bg-card/90 px-2.5 py-1 font-mono text-[10px] text-muted-foreground shadow-sm ring-1 ring-border backdrop-blur-sm"
+                    className="pointer-events-none absolute top-2.5 left-2.5 flex items-center gap-1.5 rounded-full bg-card px-2.5 py-1 font-mono text-[10px] text-muted-foreground shadow-sm ring-1 ring-border"
                   >
                     <span className="relative flex size-1.5">
                       <span className="absolute inset-0 animate-ping rounded-full bg-brand-green motion-reduce:animate-none" />

@@ -76,7 +76,7 @@ export function SiteHeader() {
         "sticky top-0 z-40 border-b transition-[background-color,border-color,color] duration-300",
         overlay
           ? "border-transparent bg-transparent text-white [text-shadow:0_1px_10px_rgb(0_0_0/0.45)]"
-          : "border-border/70 bg-background/85 backdrop-blur-md supports-[backdrop-filter]:bg-background/70"
+          : "border-border/70 bg-background/95"
       )}
     >
       <div className="container-page flex h-14 items-center justify-between gap-4">

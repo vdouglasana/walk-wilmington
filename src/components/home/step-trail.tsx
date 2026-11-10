@@ -44,6 +44,7 @@ export function StepTrail({
   const [layout, setLayout] = useState<Layout | null>(null)
   const walked = useRef<SVGPathElement>(null)
   const dot = useRef<SVGGElement>(null)
+  const lineLength = useRef(0)
 
   // Draw so the tip of the line sits a bit above the middle of the screen
   const { scrollYProgress } = useScroll({
@@ -99,12 +100,15 @@ export function StepTrail({
     const p = walked.current
     const g = dot.current
     if (!p || !g) return
-    const pt = p.getPointAtLength(p.getTotalLength() * v)
+    // Measuring a long curve is slow, so do it once and reuse it
+    if (!lineLength.current) lineLength.current = p.getTotalLength()
+    const pt = p.getPointAtLength(lineLength.current * v)
     g.setAttribute("transform", `translate(${pt.x} ${pt.y})`)
     g.style.opacity = v > 0.005 && v < 0.88 ? "1" : "0"
   }
   useMotionValueEvent(drawn, "change", placeDot)
   useEffect(() => {
+    lineLength.current = 0 // the trail's shape changed, so measure it again
     if (layout) placeDot(drawn.get())
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [layout])
