@@ -3,8 +3,7 @@
   "configurations": [
     {
       "name": "walk-wilmington",
-      "runtimeExecutable": "/Users/vincentanastasia/.nvm/versions/node/v22.23.4/bin/node",
-      "runtimeArgs": ["node_modules/next/dist/bin/next", "dev", "--port", "3000"],
+      "url": "http://localhost:3000",
       "port": 3000
     }
   ]
