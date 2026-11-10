@@ -3,6 +3,8 @@
 import { ReactLenis } from "lenis/react"
 import "lenis/dist/lenis.css"
 
+import { useFxOff } from "@/lib/fx"
+
 /**
  * Smooth scrolling for the whole site (Lenis).
  * It glides the page and keeps the scroll-driven animations (map drawing,
@@ -11,6 +13,8 @@ import "lenis/dist/lenis.css"
  * and leaves phone touch scrolling as the phone's own.
  */
 export function SmoothScroll({ children }: { children: React.ReactNode }) {
+  const off = useFxOff("lenis")
+  if (off) return <>{children}</>
   return (
     <ReactLenis
       root

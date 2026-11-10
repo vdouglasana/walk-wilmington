@@ -9,12 +9,15 @@ import {
   useTransform,
 } from "motion/react"
 
+import { useFxOff } from "@/lib/fx"
+
 const words = ["Let's", "walk,", "Wilmington"]
 const ease = [0.22, 1, 0.36, 1] as const
 
 export function Hero() {
   const ref = useRef<HTMLElement>(null)
-  const reduce = useReducedMotion()
+  const noParallax = useFxOff("parallax")
+  const reduce = useReducedMotion() || noParallax
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
@@ -30,7 +33,7 @@ export function Hero() {
       className="relative -mt-14 h-[100svh] min-h-[560px] overflow-hidden bg-neutral-900 text-white"
     >
       <motion.div
-        className="absolute inset-0 origin-bottom"
+        className="absolute inset-0 origin-bottom will-change-transform"
         // Only moves (never zooms) while scrolling: zooming a full-screen photo
         // makes the browser redraw it every frame, which causes stutter
         style={reduce ? { scale: 1.06 } : { y, scale: 1.06 }}
@@ -55,7 +58,7 @@ export function Hero() {
       />
 
       <motion.div
-        className="container-page relative flex h-full flex-col justify-end pb-10 sm:pb-14"
+        className="container-page relative flex h-full flex-col justify-end pb-10 will-change-transform sm:pb-14"
         style={reduce ? undefined : { y: textY, opacity: textOpacity }}
       >
         <motion.p

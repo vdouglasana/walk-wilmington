@@ -15,6 +15,7 @@ import type { ProjectedMap } from "@/lib/geo"
 import { paths } from "@/lib/paths"
 import { PathMap } from "@/components/path-map"
 import { StepTrail } from "@/components/home/step-trail"
+import { useFxOff } from "@/lib/fx"
 
 const steps = [
   {
@@ -42,6 +43,8 @@ const steps = [
 export function HowItWorks({ map }: { map: ProjectedMap }) {
   const ref = useRef<HTMLDivElement>(null)
   const stepsRef = useRef<HTMLDivElement>(null)
+  const noDraw = useFxOff("draw")
+  const noTrail = useFxOff("trail")
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start 0.7", "end 0.9"],
@@ -111,7 +114,7 @@ export function HowItWorks({ map }: { map: ProjectedMap }) {
             <div className="relative h-[44svh] overflow-hidden rounded-lg map-land ring-1 ring-border md:h-auto md:min-h-0 md:flex-1">
               <PathMap
                 map={map}
-                progress={scrollYProgress}
+                progress={noDraw ? undefined : scrollYProgress}
                 className="absolute inset-0 h-full w-full"
                 activeId={activeId}
                 onHover={ready ? hover : undefined}
@@ -225,7 +228,7 @@ export function HowItWorks({ map }: { map: ProjectedMap }) {
         </div>
 
         <div ref={stepsRef} className="relative isolate md:order-1">
-        <StepTrail containerRef={stepsRef} nextHref="#passes" />
+        {!noTrail && <StepTrail containerRef={stepsRef} nextHref="#passes" />}
         <ol>
           {steps.map((s) => (
             <motion.li

@@ -6,11 +6,14 @@ import { useRef } from "react"
 import { ArrowRightIcon } from "lucide-react"
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react"
 
+import { useFxOff } from "@/lib/fx"
+
 import { NumberTicker } from "@/components/ui/number-ticker"
 
 export function Closing() {
   const ref = useRef<HTMLElement>(null)
-  const reduce = useReducedMotion()
+  const noParallax = useFxOff("parallax")
+  const reduce = useReducedMotion() || noParallax
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] })
   const y = useTransform(scrollYProgress, [0, 1], ["-10%", "10%"])
 
@@ -20,7 +23,7 @@ export function Closing() {
       className="relative overflow-hidden bg-neutral-900 text-white"
       aria-label="Wilmington connected"
     >
-      <motion.div className="absolute -inset-y-[12%] inset-x-0" style={reduce ? undefined : { y }}>
+      <motion.div className="absolute -inset-y-[12%] inset-x-0 will-change-transform" style={reduce ? undefined : { y }}>
         <Image
           src="/images/home-3.jpg"
           alt="Aerial drone view over Wilmington's commercial area along the train tracks, with woods and neighborhoods beyond"
