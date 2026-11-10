@@ -8,6 +8,7 @@ import { site } from "@/lib/site"
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { BackToTop } from "@/components/back-to-top"
+import { SmoothScroll } from "@/components/smooth-scroll"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -50,6 +51,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="grain flex min-h-full flex-col">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
           <MotionConfig reducedMotion="user">
+           <SmoothScroll>
             <a
               href="#main"
               className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-md focus:bg-foreground focus:px-3 focus:py-2 focus:text-sm focus:text-background"
@@ -62,6 +64,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             </main>
             <SiteFooter />
             <BackToTop />
+           </SmoothScroll>
           </MotionConfig>
         </ThemeProvider>
       </body>

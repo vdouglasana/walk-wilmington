@@ -21,7 +21,6 @@ export function Hero() {
   })
   // The photo drifts and settles slightly as you scroll away (parallax)
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "18%"])
-  const scale = useTransform(scrollYProgress, [0, 1], [1.06, 1.16])
   const textY = useTransform(scrollYProgress, [0, 1], ["0%", "-30%"])
   const textOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0])
 
@@ -32,7 +31,9 @@ export function Hero() {
     >
       <motion.div
         className="absolute inset-0 origin-bottom"
-        style={reduce ? undefined : { y, scale }}
+        // Only moves (never zooms) while scrolling: zooming a full-screen photo
+        // makes the browser redraw it every frame, which causes stutter
+        style={reduce ? { scale: 1.06 } : { y, scale: 1.06 }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1.2 }}

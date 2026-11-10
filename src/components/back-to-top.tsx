@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useLenis } from "lenis/react"
 import { ArrowUpIcon } from "lucide-react"
 import {
   AnimatePresence,
@@ -14,6 +15,7 @@ export function BackToTop() {
   const { scrollY } = useScroll()
   const [show, setShow] = useState(false)
   const reduce = useReducedMotion()
+  const lenis = useLenis()
 
   useMotionValueEvent(scrollY, "change", (y) => setShow(y > 900))
 
@@ -23,7 +25,9 @@ export function BackToTop() {
         <motion.button
           type="button"
           onClick={() =>
-            window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" })
+            lenis
+              ? lenis.scrollTo(0, { immediate: !!reduce })
+              : window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" })
           }
           aria-label="Back to top"
           initial={{ opacity: 0, y: 8 }}
