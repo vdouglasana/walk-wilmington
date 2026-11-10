@@ -156,70 +156,106 @@ function Ticket({ p }: { p: WalkPath }) {
 }
 
 /**
- * One simple line drawing per path, all in the same style:
- * 1 North Wilmington: pond ripples (it passes a pond near Lubbers Brook)
- * 2 Main Street: a road with a center line (the one path along a main road)
- * 3 Rotary Park: a scatter of trees (it leads to the park's trails)
- * 4 Butters Row: a switchback trail (it winds behind the buildings)
- * 5 Yentile-East: a long loop (it loops south and comes back up)
+ * A small line-drawn scene per path, all in the same thin style.
+ * Each sits on a ground line along the bottom of the colored box.
+ * 1 North Wilmington: a neighborhood (houses)
+ * 2 Main Street: a row of shops
+ * 3 Rotary Park: a park (round trees, a bench, a winding path)
+ * 4 Butters Row: the woods (pine trees)
+ * 5 Yentile-East: a footbridge over a brook, with a field
  */
 function TicketArt({ id }: { id: number }) {
-  const common = {
-    "aria-hidden": true,
-    fill: "none",
-    stroke: "currentColor",
-    strokeWidth: 0.9,
-    strokeLinecap: "round" as const,
-    className: "pointer-events-none absolute -right-3 -bottom-5 w-32 opacity-30",
-    viewBox: "0 0 100 60",
-  }
-  switch (id) {
-    case 1:
-      return (
-        <svg {...common}>
-          {[6, 12, 18, 24, 30].map((r) => (
-            <ellipse key={r} cx="62" cy="40" rx={r * 1.35} ry={r * 0.75} />
-          ))}
-        </svg>
-      )
-    case 2:
-      return (
-        <svg {...common}>
-          <path d="M0 30 L100 18" />
-          <path d="M0 52 L100 40" />
-          <path d="M0 41 L100 29" strokeDasharray="5 4" />
-        </svg>
-      )
-    case 3:
-      return (
-        <svg {...common}>
-          {[
-            [30, 40], [46, 30], [58, 46], [72, 32], [86, 44], [64, 18], [88, 20], [40, 54], [76, 56],
-          ].map(([x, y], i) => (
-            <g key={i}>
-              <circle cx={x} cy={y} r={i % 3 === 0 ? 6 : 4.5} />
-              <circle cx={x} cy={y} r={1} fill="currentColor" />
-            </g>
-          ))}
-        </svg>
-      )
-    case 4:
-      return (
-        <svg {...common}>
-          <path d="M20 58 L80 50 L30 40 L84 30 L36 20 L90 10" strokeLinejoin="round" />
-          <path d="M20 58 L80 50 L30 40 L84 30 L36 20 L90 10" strokeDasharray="1 4" transform="translate(0 4)" />
-        </svg>
-      )
-    default:
-      return (
-        <svg {...common}>
-          <g transform="translate(0 -16)">
-            <path d="M8 22 C30 22 34 56 58 56 C82 56 96 40 90 26 C84 12 62 18 66 30" />
-            <path d="M8 30 C28 30 32 64 58 64" opacity="0.6" />
-            <circle cx="8" cy="22" r="2" fill="currentColor" />
-            <circle cx="66" cy="30" r="2" fill="currentColor" />
-          </g>
-        </svg>
-      )
-  }
+  return (
+    <svg
+      aria-hidden
+      viewBox="0 0 130 64"
+      preserveAspectRatio="xMaxYMax meet"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.1}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="pointer-events-none absolute right-0 bottom-0 h-[82%] w-[74%] opacity-50 [mask-image:linear-gradient(to_right,transparent,black_22%)]"
+    >
+      {SCENES[id as keyof typeof SCENES]}
+      {/* ground */}
+      <path d="M0 63.5H130" />
+    </svg>
+  )
+}
+
+const SCENES = {
+  1: (
+    <>
+      {/* small house */}
+      <path d="M14 63V44H36V63M11 46L25 34L39 46" />
+      <path d="M22 63V54H28V63M16 48H21V52H16Z" />
+      {/* tall house with chimney */}
+      <path d="M46 63V38H74V63M42 40L60 24L78 40M66 31V25H70V34" />
+      <path d="M57 63V52H63V63M49 43H55V48H49ZM65 43H71V48H65Z" />
+      {/* wide house */}
+      <path d="M84 63V46H122V63M80 48L103 32L126 48" />
+      <path d="M99 63V54H106V63M88 51H95V56H88ZM111 51H118V56H111Z" />
+      {/* fence */}
+      <path d="M38 63V58M41 63V58M44 63V58M76 63V58M79 63V58M82 63V58M37 59.5H45M75 59.5H83" />
+    </>
+  ),
+  2: (
+    <>
+      {/* three storefronts with awnings */}
+      <path d="M4 63V30H44V63M4 36H44" />
+      <path d="M2 40H46L43 46H5Z M10 40V46M18 40V46M26 40V46M34 40V46" />
+      <path d="M8 63V50H18V63M22 50H40V58H22Z" />
+      <path d="M48 63V22H86V63M48 28H86" />
+      <path d="M46 34H88L85 40H49Z M54 34V40M62 34V40M70 34V40M78 34V40" />
+      <path d="M52 63V46H62V63M66 46H82V56H66Z" />
+      <path d="M90 63V34H126V63M90 40H126" />
+      <path d="M88 44H128L125 50H91Z M96 44V50M104 44V50M112 44V50M120 44V50" />
+      <path d="M94 63V53H103V63M107 53H122V60H107Z" />
+      {/* sign boards */}
+      <path d="M14 31H34V35H14ZM56 23H78V27H56ZM98 35H118V39H98Z" />
+    </>
+  ),
+  3: (
+    <>
+      {/* winding path */}
+      <path d="M40 63C46 56 62 56 66 50C70 44 84 44 96 42" strokeDasharray="2 2.5" />
+      {/* round trees */}
+      <circle cx="18" cy="34" r="11" />
+      <path d="M18 45V63M18 52L13 47M18 50L23 45" />
+      <circle cx="108" cy="30" r="13" />
+      <path d="M108 43V63M108 51L102 46M108 49L114 44" />
+      <circle cx="80" cy="40" r="7" />
+      <path d="M80 47V63" />
+      {/* bench */}
+      <path d="M44 52H62M44 55H62M46 55V63M60 55V63M44 48H62" />
+      {/* bushes */}
+      <path d="M118 63C118 58 128 58 128 63M28 63C28 59 36 59 36 63" />
+    </>
+  ),
+  4: (
+    <>
+      {/* pine trees of different sizes */}
+      <path d="M14 63V56M14 20L4 38H9L2 50H8L-1 58H29L20 50H26L19 38H24Z" />
+      <path d="M44 63V58M44 30L36 44H40L34 54H54L48 44H52Z" />
+      <path d="M70 63V56M70 12L58 32H64L55 46H62L52 58H88L78 46H85L76 32H82Z" />
+      <path d="M100 63V58M100 28L91 43H95L88 54H112L105 43H109Z" />
+      <path d="M122 63V57M122 22L113 37H117L110 49H134L127 37H131Z" />
+    </>
+  ),
+  5: (
+    <>
+      {/* brook under the bridge */}
+      <path d="M30 61C36 59 42 63 48 61C54 59 60 63 66 61C72 59 78 63 84 61" />
+      <path d="M38 57C42 56 46 58 50 57M60 57C64 56 68 58 72 57" />
+      {/* arched footbridge with railings */}
+      <path d="M22 63C34 40 74 40 88 63" />
+      <path d="M22 50C34 32 74 32 88 50" />
+      <path d="M26 57V46M34 50V39M44 46V36M55 45V35M66 46V36M76 50V39M84 57V46" />
+      {/* field: grass tufts and a fence line */}
+      <path d="M96 63L98 57L100 63M104 63L106 58L108 63M112 63L114 56L116 63M120 63L122 58L124 63" />
+      <path d="M94 50H130M98 46V56M110 46V56M122 46V56" />
+      <path d="M0 63L2 58L4 63M8 63L10 57L12 63" />
+    </>
+  ),
 }

@@ -206,7 +206,8 @@ export function HowItWorks({ map }: { map: ProjectedMap }) {
                     onBlur={() => hover(null)}
                     onClick={() => select(p.id)}
                     aria-pressed={pinnedId === p.id}
-                    className="flex items-center gap-1.5 rounded-md px-1.5 py-1 font-mono text-[11px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground aria-pressed:bg-muted aria-pressed:text-foreground"
+                    data-active={activeId === p.id || undefined}
+                    className="flex items-center gap-1.5 rounded-md px-1.5 py-1 font-mono text-[11px] text-muted-foreground transition-colors hover:text-foreground data-active:bg-muted data-active:text-foreground"
                   >
                     <span
                       aria-hidden
