@@ -154,10 +154,10 @@ export function HowItWorks({ map }: { map: ProjectedMap }) {
                     key="hint"
                     style={{ opacity: hintOpacity }}
                     exit={{ opacity: 0 }}
-                    className="pointer-events-none absolute top-2.5 left-2.5 flex items-center gap-1.5 rounded-full bg-foreground px-3 py-1.5 text-xs font-medium text-background shadow-md"
+                    className="pointer-events-none absolute top-2.5 left-2.5 flex items-center gap-1.5 rounded-full bg-card px-2.5 py-1 font-mono text-[10px] text-muted-foreground shadow-sm ring-1 ring-border"
                   >
-                    <MousePointerClickIcon className="relative size-3.5" />
-                    <span className="relative">Hover or tap a path to explore</span>
+                    <MousePointerClickIcon className="size-3.5 text-[color-mix(in_oklch,var(--brand-green)_70%,var(--foreground))]" />
+                    Hover or tap a path to explore
                   </motion.span>
                 )}
               </AnimatePresence>
