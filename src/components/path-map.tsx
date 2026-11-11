@@ -9,6 +9,7 @@ import {
 } from "motion/react"
 
 import type { ProjectedMap, ProjectedPath } from "@/lib/geo"
+import { inkOn } from "@/lib/paths"
 
 type Props = {
   map: ProjectedMap
@@ -121,7 +122,7 @@ function MapPath({
           dy="0.35em"
           textAnchor="middle"
           className="font-mono text-[11px] font-semibold"
-          fill={p.id === 1 ? "#1a1a1a" : "#fff"}
+          fill={inkOn(p.id)}
         >
           {p.id}
         </text>
@@ -247,7 +248,7 @@ export function PathMap({
               <path d={p.d} fill="none" stroke="var(--foreground)" strokeOpacity={0.18} strokeWidth={11} vectorEffect="non-scaling-stroke" strokeLinecap="round" strokeLinejoin="round" />
               <path d={p.d} fill="none" stroke={`var(--path-${p.id})`} strokeWidth={7} vectorEffect="non-scaling-stroke" strokeLinecap="round" strokeLinejoin="round" />
               <circle cx={p.labelAt.x} cy={p.labelAt.y} r={11} fill={`var(--path-${p.id})`} stroke="var(--background)" strokeWidth={3} />
-              <text x={p.labelAt.x} y={p.labelAt.y} dy="0.35em" textAnchor="middle" className="font-mono text-[11px] font-semibold" fill={p.id === 1 ? "#1a1a1a" : "#fff"}>
+              <text x={p.labelAt.x} y={p.labelAt.y} dy="0.35em" textAnchor="middle" className="font-mono text-[11px] font-semibold" fill={inkOn(p.id)}>
                 {p.id}
               </text>
             </g>

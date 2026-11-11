@@ -98,9 +98,10 @@ const faq: FaqItem[] = [
     q: "Who would pay for it?",
     a: (
       <p>
-        Usually a mix of town money and state grants. Massachusetts has grant programs for trails and
-        walking paths (like MassTrails), and towns often use them to help pay for projects like these.
-        Unpaved paths generally cost much less to build than paved ones.
+        Usually a mix of town money and state or federal grants. The nearby Tri-Community Greenway, for
+        example, was a $5 million state project paid for with federal and state money. Massachusetts also
+        has grant programs for trails (like MassTrails), and unpaved paths generally cost much less to
+        build than paved ones.
       </p>
     ),
   },
@@ -211,6 +212,7 @@ export default function AboutPage() {
           alt="A paved walking path curving through autumn woods, with two people walking in the distance"
           fill
           sizes="100vw"
+          quality={60}
           className="object-cover object-[50%_60%]"
         />
         <div aria-hidden className="absolute inset-0 bg-[linear-gradient(to_top,rgb(0_0_0/0.75),rgb(0_0_0/0.2)_60%,rgb(0_0_0/0.35))]" />

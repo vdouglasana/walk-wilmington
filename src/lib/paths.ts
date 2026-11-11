@@ -141,3 +141,9 @@ export const paths: WalkPath[] = base.map((p) => {
 })
 
 export const totalMiles = 5.4
+
+/**
+ * Text color to put on top of a path's color. Yellow and orange are light,
+ * so they get near-black text; the darker red, blue, and purple get white.
+ */
+export const inkOn = (id: number) => (id === 1 || id === 4 ? "#1a1a1a" : "#fff")

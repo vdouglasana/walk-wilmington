@@ -26,6 +26,7 @@ export function Closing() {
           alt="Aerial drone view over Wilmington's commercial area along the train tracks, with woods and neighborhoods beyond"
           fill
           sizes="100vw"
+          quality={60}
           className="object-cover"
         />
       </motion.div>

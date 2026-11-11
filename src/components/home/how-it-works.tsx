@@ -115,12 +115,12 @@ export function HowItWorks({ map }: { map: ProjectedMap }) {
           </span>
           A Quick Overview
         </p>
-        <p className="mt-5 text-[clamp(1.9rem,4.4vw,3.3rem)] leading-[1.08] font-medium tracking-[-0.03em] text-balance">
+        <h2 className="mt-5 text-[clamp(1.9rem,4.4vw,3.3rem)] leading-[1.08] font-medium tracking-[-0.03em] text-balance">
           Five paths. One question:{" "}
           <span className="text-muted-foreground">
             what if you could cross town without walking along a major roadway?
           </span>
-        </p>
+        </h2>
       </div>
 
       <div

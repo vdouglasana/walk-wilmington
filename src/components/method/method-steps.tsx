@@ -6,6 +6,7 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react"
 import { cn } from "@/lib/utils"
 import type { ProjectedMap } from "@/lib/geo"
 import { BaseLayer } from "@/components/path-map"
+import { inkOn } from "@/lib/paths"
 
 const HUB_RED = "#e5533f"
 const ns = { vectorEffect: "non-scaling-stroke" as const }
@@ -125,7 +126,7 @@ export function MethodSteps({ steps, map, miles }: { steps: Step[]; map: Project
             {map.paths.map((p, i) => (
               <motion.g key={`m${p.id}`} initial={false} animate={{ opacity: active === 3 ? 1 : 0 }} transition={t(active === 3 ? 0.5 + i * 0.12 : 0)}>
                 <rect x={p.labelAt.x - 24} y={p.labelAt.y - 11} width={48} height={22} rx={11} fill={`var(--path-${p.id})`} stroke="var(--background)" strokeWidth={2.5} {...ns} />
-                <text x={p.labelAt.x} y={p.labelAt.y} dy="0.35em" textAnchor="middle" className="font-mono text-[11px] font-semibold" fill={p.id === 1 ? "#1a1a1a" : "#fff"}>
+                <text x={p.labelAt.x} y={p.labelAt.y} dy="0.35em" textAnchor="middle" className="font-mono text-[11px] font-semibold" fill={inkOn(p.id)}>
                   {miles[p.id]?.toFixed(1)} mi
                 </text>
               </motion.g>
@@ -145,7 +146,7 @@ export function MethodSteps({ steps, map, miles }: { steps: Step[]; map: Project
                 <p className="field-label">A few miles south</p>
                 <p className="mt-1.5 font-semibold tracking-[-0.02em]">Tri-Community Greenway</p>
                 <p className="mt-1 text-sm text-muted-foreground">Woburn, Winchester, and Stoneham</p>
-                <p className="mt-2 font-mono text-xs">About 6.5 miles · opened 2019</p>
+                <p className="mt-2 font-mono text-xs">6.6 miles · opened 2019</p>
               </motion.div>
             )}
           </AnimatePresence>
@@ -174,7 +175,7 @@ export function MethodSteps({ steps, map, miles }: { steps: Step[]; map: Project
               )}
             >
               <span className="field-label">Step {s.n}</span>
-              <h3 className="mt-3 text-[clamp(1.8rem,3.6vw,2.6rem)] leading-[1.05] font-semibold tracking-[-0.04em]">{s.title}</h3>
+              <h2 className="mt-3 text-[clamp(1.8rem,3.6vw,2.6rem)] leading-[1.05] font-semibold tracking-[-0.04em]">{s.title}</h2>
               <p className="mt-4 max-w-md text-lg text-pretty text-muted-foreground">{s.body}</p>
             </div>
           </li>

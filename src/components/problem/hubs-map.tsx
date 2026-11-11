@@ -7,6 +7,7 @@ import { ArrowLeftIcon, ArrowRightIcon, MousePointerClickIcon } from "lucide-rea
 import { cn } from "@/lib/utils"
 import type { ProjectedMap } from "@/lib/geo"
 import { BaseLayer } from "@/components/path-map"
+import { inkOn } from "@/lib/paths"
 
 const HUB_RED = "#e5533f"
 const ns = { vectorEffect: "non-scaling-stroke" as const }
@@ -18,7 +19,7 @@ function PathChips({ paths }: { paths: number[] }) {
         <span
           key={p}
           className="grid size-5 place-items-center rounded-full font-mono text-[10px] font-semibold"
-          style={{ background: `var(--path-${p})`, color: p === 1 ? "#1a1a1a" : "#fff" }}
+          style={{ background: `var(--path-${p})`, color: inkOn(p) }}
         >
           {p}
         </span>
@@ -225,7 +226,7 @@ export function HubsMap({ map }: { map: ProjectedMap }) {
         </svg>
 
         {/* red label, a nod to the original map */}
-        <span className="pointer-events-none absolute top-3 left-3 rounded-md px-2.5 py-1 text-sm font-semibold text-white shadow-md" style={{ background: HUB_RED }}>
+        <span className="pointer-events-none absolute top-3 left-3 rounded-md px-2.5 py-1 text-sm font-semibold text-white shadow-md" style={{ background: "#c43c2a" }}>
           Wilmington&apos;s Hubs
         </span>
         <span className="pointer-events-none absolute bottom-3 left-3 hidden items-center gap-1.5 rounded-full border border-border bg-card/95 px-2.5 py-1 text-[11px] font-medium text-muted-foreground shadow-sm sm:flex">

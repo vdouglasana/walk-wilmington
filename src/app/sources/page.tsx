@@ -100,9 +100,10 @@ export default function SourcesPage() {
       <FineSection title="Nearby examples and the town">
         <ul>
           <li>
-            Tri-Community Greenway (Woburn, Winchester, Stoneham), about 6.5 miles, opened in 2019:{" "}
-            <a href="https://stantec.com/en/news/2019/stantec-celebrates-tri-community-greenway-opening" target="_blank" rel="noreferrer">
-              Stantec
+            Tri-Community Greenway (Woburn, Winchester, Stoneham), 6.63 miles, opened in June 2019 as a
+            $5 million MassDOT project:{" "}
+            <a href="https://patch.com/massachusetts/stoneham/snip-ribbon-greenway-officially-opens" target="_blank" rel="noreferrer">
+              Stoneham Patch
             </a>{" "}
             and{" "}
             <a href="https://www.traillink.com/trail/tri-community-greenway" target="_blank" rel="noreferrer">

@@ -155,6 +155,7 @@ export default function TheProblemPage() {
           alt="Aerial drone view over Wilmington with woods and neighborhoods between the buildings"
           fill
           sizes="100vw"
+          quality={60}
           className="object-cover"
         />
         <div

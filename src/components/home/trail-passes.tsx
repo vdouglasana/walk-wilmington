@@ -10,7 +10,7 @@ import {
   useTransform,
 } from "motion/react"
 
-import { paths, type WalkPath } from "@/lib/paths"
+import { type WalkPath, inkOn, paths } from "@/lib/paths"
 import { TopoBackground } from "@/components/topo-background"
 import { SectionCue } from "@/components/section-cue"
 
@@ -62,7 +62,7 @@ function Ticket({ p }: { p: WalkPath }) {
   const rotateY = useSpring(useTransform(mx, [0, 1], [-9, 9]), spring)
   const rotateX = useSpring(useTransform(my, [0, 1], [7, -7]), spring)
 
-  const darkText = p.id === 1 // yellow needs dark text
+  const darkText = inkOn(p.id) !== "#fff" // yellow and orange need dark text
   const color = `var(--path-${p.id})`
 
   return (

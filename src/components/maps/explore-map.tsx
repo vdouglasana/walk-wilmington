@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils"
 import type { ProjectedMap } from "@/lib/geo"
 import { BaseLayer } from "@/components/path-map"
 import { PathBadge } from "@/components/paths/path-badge"
+import { inkOn } from "@/lib/paths"
 
 type Box = { x: number; y: number; w: number; h: number }
 type PathInfo = { id: number; slug: string; name: string; from: string; to: string; miles: number; minutes: number; surface: string }
@@ -242,7 +243,7 @@ export function ExploreMap({ map, info }: { map: ProjectedMap; info: PathInfo[] 
           {map.paths.map((p) => (
             <g key={`b${p.id}`} pointerEvents="none" opacity={active != null && active !== p.id ? 0.35 : 1}>
               <circle cx={p.labelAt.x} cy={p.labelAt.y} r={10 * u} fill={`var(--path-${p.id})`} stroke="var(--background)" strokeWidth={2.5} {...ns} />
-              <text x={p.labelAt.x} y={p.labelAt.y} dy="0.35em" textAnchor="middle" fontSize={10.5 * u} className="font-mono font-semibold" fill={p.id === 1 ? "#1a1a1a" : "#fff"}>
+              <text x={p.labelAt.x} y={p.labelAt.y} dy="0.35em" textAnchor="middle" fontSize={10.5 * u} className="font-mono font-semibold" fill={inkOn(p.id)}>
                 {p.id}
               </text>
             </g>

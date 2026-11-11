@@ -2,6 +2,7 @@
 
 import { useRef } from "react"
 import { motion, useInView, useReducedMotion } from "motion/react"
+import { inkOn } from "@/lib/paths"
 
 /**
  * "Linking the Five" as a transit-style line map. The paths share hubs, so they snap
@@ -128,7 +129,7 @@ function Diagram({ layout, show, reduce, className }: { layout: Layout; show: bo
             transition={{ duration: 0.3, delay: delayOf(l.id) + 0.35 }}
           >
             <circle cx={l.badge[0]} cy={l.badge[1]} r={12} fill={`var(--path-${l.id})`} stroke="var(--background)" strokeWidth={3} />
-            <text x={l.badge[0]} y={l.badge[1]} dy="0.35em" textAnchor="middle" className="font-mono text-[12px] font-semibold" fill={l.id === 1 ? "#1a1a1a" : "#fff"}>
+            <text x={l.badge[0]} y={l.badge[1]} dy="0.35em" textAnchor="middle" className="font-mono text-[12px] font-semibold" fill={inkOn(l.id)}>
               {l.id}
             </text>
           </motion.g>
