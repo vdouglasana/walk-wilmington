@@ -50,7 +50,11 @@ type LngLat = [number, number]
  * coordinates. Uses a simple flat projection, which is fine at town scale:
  * longitude is squeezed by cos(latitude) so distances look right.
  */
-export function projectPaths(width = 520, padding = 30, withHubs = false): ProjectedMap {
+/**
+ * The math that turns [lng, lat] into map units, shared by every map on the site so
+ * anything drawn on top (hubs, routes) lines up with the paths.
+ */
+export function makeProjector(width = 520, padding = 30, withHubs = false) {
   const all: LngLat[] = paths.flatMap((p) => [...p.coords, ...p.trailheads.map((t) => t.coord)]) as LngLat[]
   // the hubs map also needs room for the hub outlines
   if (withHubs) all.push(...hubs.flatMap((h) => h.outline))
@@ -71,6 +75,11 @@ export function projectPaths(width = 520, padding = 30, withHubs = false): Proje
     x: +((lng * k - minX) * scale + padding).toFixed(1),
     y: +((maxY - lat) * scale + padding).toFixed(1),
   })
+  return { project, scale, height }
+}
+
+export function projectPaths(width = 520, padding = 30, withHubs = false): ProjectedMap {
+  const { project, scale, height } = makeProjector(width, padding, withHubs)
 
   const line = (pts: LngLat[], close = false) =>
     pts

@@ -50,7 +50,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="grain flex min-h-full flex-col">
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
+        {/* Light mode only: dark mode was removed, so any saved "dark" choice is ignored */}
+        <ThemeProvider attribute="class" forcedTheme="light" enableSystem={false}>
           <MotionConfig reducedMotion="user">
            <SmoothScroll>
             <a

@@ -142,13 +142,13 @@ export default function MapsPage() {
             <Reveal delay={0.25}>
               <div className="flex h-full flex-col justify-between rounded-2xl bg-foreground p-6 text-background">
                 <p className="text-xl leading-snug font-medium tracking-[-0.02em] text-balance">
-                  These paths only happen if people in town want them.
+                  How long would your walk take with the paths?
                 </p>
                 <Link
-                  href="/about-contact"
+                  href="/plan-your-walk"
                   className="group mt-6 inline-flex items-center gap-2 self-start rounded-full bg-background px-4 py-2.5 text-sm font-medium text-foreground transition-opacity hover:opacity-90 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
                 >
-                  Next: How you can help
+                  Next: Plan your walk
                   <ArrowRightIcon className="size-4 transition-transform group-hover:translate-x-0.5" />
                 </Link>
               </div>

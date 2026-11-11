@@ -17,7 +17,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
-import { ThemeToggle } from "@/components/theme-toggle"
 
 function Logo({ overlay }: { overlay: boolean }) {
   return (
@@ -82,7 +81,7 @@ export function SiteHeader() {
       <div className="container-page flex h-14 items-center justify-between gap-4">
         <Logo overlay={overlay} />
 
-        <nav aria-label="Main" className="hidden md:block">
+        <nav aria-label="Main" className="hidden lg:block">
           <ul className="flex items-center gap-1">
             {nav.map((item) => {
               const active = isActive(pathname, item.href)
@@ -92,7 +91,7 @@ export function SiteHeader() {
                     href={item.href}
                     aria-current={active ? "page" : undefined}
                     className={cn(
-                      "relative rounded-md px-2.5 py-1.5 text-sm transition-colors focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none",
+                      "relative rounded-md px-2.5 py-1.5 text-sm whitespace-nowrap transition-colors focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none",
                       overlay
                         ? "text-white/90 hover:text-white"
                         : "text-muted-foreground hover:text-foreground",
@@ -123,13 +122,12 @@ export function SiteHeader() {
             overlay && "[&_button]:hover:bg-white/15 [&_button]:hover:text-white"
           )}
         >
-          <ThemeToggle />
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
               <Button
                 variant="ghost"
                 size="icon"
-                className="md:hidden"
+                className="lg:hidden"
                 aria-label="Open menu"
               >
                 <MenuIcon />
