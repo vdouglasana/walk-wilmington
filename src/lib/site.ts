@@ -5,7 +5,11 @@ export const site = {
   title: "Walk Wilmington | Walking Paths for Wilmington, MA",
   description:
     "A student-led plan for five walking paths connecting Wilmington, MA's hubs. 5.4 miles of paved and unpaved paths, one connected town.",
-  url: "https://walkwilmington.com",
+  // The live address. On Vercel this is the project's main domain (walkwilmington.vercel.app
+  // for now, walkwilmington.com once it's connected), so links and share images always work.
+  url: process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : "https://walkwilmington.com",
   // Update this when the site changes.
   lastUpdated: "November 2026",
   lastUpdatedISO: "2026-11-11",
