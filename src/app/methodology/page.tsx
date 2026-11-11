@@ -1,4 +1,6 @@
 import type { Metadata } from "next"
+
+import { pageMetadata } from "@/lib/site"
 import Image from "next/image"
 import Link from "next/link"
 import { ArrowRightIcon, CircleDollarSignIcon, LandmarkIcon, MapIcon, TreesIcon, UsersIcon } from "lucide-react"
@@ -11,12 +13,12 @@ import { projectPaths } from "@/lib/geo"
 import { paths } from "@/lib/paths"
 import elevation from "@/lib/elevation.json"
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Methodology: How I Picked the Paths",
   description:
     "How the five paths were chosen: finding Wilmington's hubs, looking for the land between them, and measuring length, walk time, and elevation.",
-  alternates: { canonical: "/methodology" },
-}
+  path: "/methodology",
+})
 
 function Label({ children }: { children: React.ReactNode }) {
   return (

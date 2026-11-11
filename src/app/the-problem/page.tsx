@@ -1,4 +1,6 @@
 import type { Metadata } from "next"
+
+import { pageMetadata } from "@/lib/site"
 import Image from "next/image"
 import Link from "next/link"
 import { ArrowRightIcon, LandPlotIcon, TreePineIcon, TreesIcon, WavesIcon } from "lucide-react"
@@ -12,12 +14,12 @@ import { projectPaths } from "@/lib/geo"
 import { projectTown } from "@/lib/town-map"
 import { totalMiles } from "@/lib/paths"
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "The Problem: Why Wilmington Is Hard to Walk",
   description:
     "Wilmington grew up around Routes 38, 62, and 129. See why its sidewalks don't connect and why the town's hubs feel far apart on foot.",
-  alternates: { canonical: "/the-problem" },
-}
+  path: "/the-problem",
+})
 
 function Label({ children, id }: { children: React.ReactNode; id?: string }) {
   return (

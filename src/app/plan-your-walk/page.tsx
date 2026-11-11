@@ -1,4 +1,6 @@
 import type { Metadata } from "next"
+
+import { pageMetadata } from "@/lib/site"
 import Link from "next/link"
 import { ArrowRightIcon } from "lucide-react"
 
@@ -9,12 +11,12 @@ import { makeProjector, projectPaths } from "@/lib/geo"
 import { paths } from "@/lib/paths"
 import walks from "@/lib/walks.json"
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Plan Your Walk: Today vs. With the Paths",
   description:
     "Pick two places in Wilmington, MA and compare the walk today with the walk using the five proposed paths: time, distance, and how much of it is along busy roads.",
-  alternates: { canonical: "/plan-your-walk" },
-}
+  path: "/plan-your-walk",
+})
 
 type RawRoute = { miles: number; busyMiles: number; streetMiles: number; pathMiles: number; segs: { t: string; c: [number, number][] }[] }
 type RawWalks = {
@@ -87,12 +89,16 @@ export default function PlanYourWalkPage() {
 
         <Reveal delay={0.12} className="mt-10">
           <WalkPlanner map={map} places={places} trips={trips} />
+          <p className="mt-4 text-xs text-pretty text-muted-foreground">
+            Estimates for comparing, not directions. Walks follow streets but don&apos;t know where
+            sidewalks or shortcuts are. <a href="#how" className="underline decoration-foreground/30 underline-offset-4 hover:text-foreground">How these walks are figured out</a>.
+          </p>
         </Reveal>
         <SectionCue />
       </section>
 
       {/* how it works, in plain words */}
-      <section className="grain bg-band">
+      <section id="how" className="grain scroll-mt-16 bg-band">
         <div className="container-page grid gap-10 py-20 sm:py-28 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:gap-16">
           <Reveal>
             <p className="field-label">How these walks are figured out</p>
@@ -115,6 +121,15 @@ export default function PlanYourWalkPage() {
               one, but with a stretch along a busy road counting as {data.busyPenalty} times as long. People will go a
               little out of their way to walk on a path instead of beside traffic, so sometimes this walk is a
               bit longer, but calmer.
+            </p>
+            <p>
+              One honest limit: these walks follow streets, but they don&apos;t know which streets have
+              sidewalks (many don&apos;t, which is the whole{" "}
+              <Link href="/the-problem" className="text-foreground underline decoration-foreground/30 underline-offset-4">
+                problem
+              </Link>
+              ), and they skip the dirt shortcuts and parking-lot cut-throughs people already use. So if you
+              know a quicker way, that&apos;s exactly the kind of local knowledge the paths should build on.
             </p>
             <p>
               Times use the same pace as the rest of the site, about 20 minutes per mile. These are

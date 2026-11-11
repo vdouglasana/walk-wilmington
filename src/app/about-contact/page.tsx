@@ -1,20 +1,24 @@
 import type { Metadata } from "next"
+
 import Image from "next/image"
+import Link from "next/link"
 import { ArrowDownIcon, ExternalLinkIcon, FootprintsIcon, LandmarkIcon, Share2Icon } from "lucide-react"
 
 import { Reveal } from "@/components/reveal"
 import { SectionCue } from "@/components/section-cue"
 import { ContactForm } from "@/components/about/contact-form"
 import { ShareButton } from "@/components/about/share-button"
+import { Faq, type FaqItem } from "@/components/about/faq"
+import { Timeline, type Milestone } from "@/components/about/timeline"
 import { paths } from "@/lib/paths"
-import { site } from "@/lib/site"
+import { pageMetadata, site } from "@/lib/site"
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "About & Get Involved",
   description:
     "Meet the Wilmington High School senior behind Walk Wilmington and find out how you can help make these paths happen.",
-  alternates: { canonical: "/about-contact" },
-}
+  path: "/about-contact",
+})
 
 function Label({ children }: { children: React.ReactNode }) {
   return (
@@ -27,6 +31,121 @@ function Label({ children }: { children: React.ReactNode }) {
     </p>
   )
 }
+
+
+// Where the project stands, in time order. Update it as things happen.
+const milestones: Milestone[] = [
+  {
+    status: "done",
+    when: "",
+    title: "Found the hubs and drew five paths",
+    text: "Mapped Wilmington's busiest areas, then drew and measured five paths between them in Google Earth.",
+  },
+  {
+    status: "done",
+    when: "",
+    title: "First Walk Wilmington website",
+    text: "Put the idea online for the first time, built in Canva.",
+  },
+  {
+    status: "now",
+    when: "November 2026",
+    title: "A new walkwilmington.com",
+    text: "Interactive maps, real elevation data, and Plan Your Walk, so anyone can see what the paths would change.",
+  },
+  {
+    status: "next",
+    when: "",
+    title: "Hear where people already walk",
+    text: "Collect shortcuts, worn trails, and wish-I-could-walk-here spots from neighbors to make the map better.",
+  },
+  {
+    status: "next",
+    when: "",
+    title: "Share the plan with the town",
+    text: "Bring the paths to the Planning Department and the Conservation Commission.",
+  },
+  {
+    status: "later",
+    when: "",
+    title: "Keep improving the paths",
+    text: "Adjust the routes based on what neighbors and the town say.",
+  },
+]
+
+const faq: FaqItem[] = [
+  {
+    q: "Is this an official town plan?",
+    a: (
+      <p>
+        No. Walk Wilmington is a student project, not a plan from the Town of Wilmington, and no town
+        board has approved it. The goal is to start a conversation and show what&apos;s possible, then
+        share it with the Planning Department and the Conservation Commission.
+      </p>
+    ),
+  },
+  {
+    q: "Who would build these paths?",
+    a: (
+      <p>
+        That would be up to the town. Projects like this usually start with town departments and boards
+        deciding it&apos;s worth studying, then a design by engineers, with chances for residents to weigh
+        in along the way.
+      </p>
+    ),
+  },
+  {
+    q: "Who would pay for it?",
+    a: (
+      <p>
+        Usually a mix of town money and state grants. Massachusetts has grant programs for trails and
+        walking paths (like MassTrails), and towns often use them to help pay for projects like these.
+        Unpaved paths generally cost much less to build than paved ones.
+      </p>
+    ),
+  },
+  {
+    q: "Who owns the land?",
+    a: (
+      <p>
+        It depends on the path. Some of the land is parks or conservation land, and some is private,
+        like the back lots behind businesses. Before anything could be built, the town would need to
+        confirm who owns each stretch, and private owners would have to agree.
+      </p>
+    ),
+  },
+  {
+    q: "What about wetlands?",
+    a: (
+      <p>
+        A few paths pass brooks and wet ground. Any work near wetlands has to be reviewed by the
+        Conservation Commission, and wet stretches can use a raised boardwalk, like the one the North
+        Wilmington Path may need near Lubbers Brook.
+      </p>
+    ),
+  },
+  {
+    q: "Why not just add more sidewalks?",
+    a: (
+      <p>
+        Sidewalks help, and Wilmington has gaps worth filling. But a sidewalk along Route 38 or Route 62
+        is still a walk next to fast traffic. The paths use the land between the hubs instead, so the
+        walk is calmer and often shorter. Try a trip on <Link href="/plan-your-walk">Plan Your Walk</Link>{" "}
+        to see the difference.
+      </p>
+    ),
+  },
+  {
+    q: "Can I walk the paths now?",
+    a: (
+      <p>
+        Not yet. They&apos;re proposals, and many cross private land, so please don&apos;t go looking for
+        them on the ground. The best way to help them exist is on this page: tell me where you walk, share
+        the project, and talk to the town.
+      </p>
+    ),
+  },
+]
 
 export default function AboutPage() {
   return (
@@ -181,7 +300,27 @@ export default function AboutPage() {
         <SectionCue className="pb-8 sm:pb-10" />
       </section>
 
-      {/* 4. Contact */}
+      {/* 4. Where things stand */}
+      <section className="container-page pt-20 pb-8 sm:pt-28 sm:pb-10">
+        <div className="grid gap-10 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] md:gap-16">
+          <Reveal>
+            <Label>What&apos;s Next</Label>
+            <h2 className="mt-4 text-[clamp(2.2rem,4.6vw,3.6rem)] leading-[1.02] font-semibold tracking-[-0.045em] text-balance">
+              Where things{" "}
+              <span className="text-muted-foreground">stand.</span>
+            </h2>
+            <p className="mt-5 max-w-sm text-pretty text-muted-foreground">
+              The project keeps moving. Check back to see what&apos;s new.
+            </p>
+          </Reveal>
+          <Reveal delay={0.08}>
+            <Timeline items={milestones} />
+          </Reveal>
+        </div>
+        <SectionCue />
+      </section>
+
+      {/* 5. Contact */}
       <section id="contact" className="container-page scroll-mt-16 py-20 sm:py-28">
         <div className="grid gap-10 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] md:gap-16">
           <Reveal>
@@ -206,6 +345,36 @@ export default function AboutPage() {
           </Reveal>
           <Reveal delay={0.08}>
             <ContactForm pathNames={paths.map((p) => p.name)} />
+            <p className="mt-4 text-xs text-pretty text-muted-foreground">
+              By sending a message, you agree to the{" "}
+              <Link href="/terms" className="underline decoration-foreground/30 underline-offset-4 hover:text-foreground">
+                Terms of Use
+              </Link>
+              . See the{" "}
+              <Link href="/privacy" className="underline decoration-foreground/30 underline-offset-4 hover:text-foreground">
+                Privacy Policy
+              </Link>{" "}
+              for what happens to your message.
+            </p>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* 6. FAQ */}
+      <section id="faq" className="grain scroll-mt-16 bg-paper">
+        <div className="container-page grid gap-10 py-20 sm:py-28 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] md:gap-16">
+          <Reveal>
+            <Label>FAQ</Label>
+            <h2 className="mt-4 text-[clamp(2.2rem,4.6vw,3.6rem)] leading-[1.02] font-semibold tracking-[-0.045em] text-balance">
+              Questions{" "}
+              <span className="text-muted-foreground">people ask.</span>
+            </h2>
+            <p className="mt-5 max-w-sm text-pretty text-muted-foreground">
+              Have one that isn&apos;t here? <a href="#contact" className="text-foreground underline decoration-foreground/30 underline-offset-4">Ask me</a>.
+            </p>
+          </Reveal>
+          <Reveal delay={0.08}>
+            <Faq items={faq} />
           </Reveal>
         </div>
       </section>

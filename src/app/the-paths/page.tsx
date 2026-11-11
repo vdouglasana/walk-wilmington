@@ -1,4 +1,6 @@
 import type { Metadata } from "next"
+
+import { pageMetadata } from "@/lib/site"
 import Image from "next/image"
 import Link from "next/link"
 import { ArrowRightIcon, ConstructionIcon, MapIcon } from "lucide-react"
@@ -14,12 +16,12 @@ import { ChainDiagram } from "@/components/paths/chain-diagram"
 import { projectPaths, type ProjectedMap } from "@/lib/geo"
 import { paths, totalMiles, type WalkPath } from "@/lib/paths"
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "The Paths: The Five Paths",
   description:
     "Five proposed walking paths from North Wilmington to the West St. Cluster, with maps, lengths, walk times, and what's in the way.",
-  alternates: { canonical: "/the-paths" },
-}
+  path: "/the-paths",
+})
 
 const SHORT: Record<number, string> = {
   1: "North Wilmington",

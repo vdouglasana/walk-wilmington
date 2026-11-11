@@ -45,6 +45,23 @@ export function Closing() {
           <Stat unit="connected">Wilmington</Stat>
         </div>
 
+        {/* an early door into Plan Your Walk, the most personal page */}
+        <Link
+          href="/plan-your-walk"
+          className="group mt-6 inline-flex items-center gap-3 rounded-full border border-white/30 bg-white/10 py-2 pr-4 pl-2 text-sm transition-colors hover:border-white/60 hover:bg-white/15 focus-visible:ring-3 focus-visible:ring-white/50 focus-visible:outline-none"
+        >
+          <span className="flex -space-x-1" aria-hidden>
+            {[1, 2, 3, 4, 5].map((i) => (
+              <span key={i} className="size-3 rounded-full ring-2 ring-neutral-900" style={{ background: `var(--path-${i})` }} />
+            ))}
+          </span>
+          <span>
+            How long would <em className="not-italic font-semibold">your</em> walk take?{" "}
+            <span className="text-white/70">Try it</span>
+          </span>
+          <ArrowRightIcon className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
+        </Link>
+
         <div className="mt-20 max-w-4xl sm:mt-28">
           <p className="text-[clamp(1.9rem,4.4vw,3.3rem)] leading-[1.1] font-medium tracking-[-0.03em] text-balance">
             Wilmington&apos;s hubs are already close together.{" "}

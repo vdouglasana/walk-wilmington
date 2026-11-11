@@ -1,4 +1,6 @@
 import type { Metadata } from "next"
+
+import { pageMetadata } from "@/lib/site"
 import Link from "next/link"
 import { ArrowRightIcon, NavigationIcon } from "lucide-react"
 
@@ -10,12 +12,12 @@ import { PathBadge } from "@/components/paths/path-badge"
 import { projectPaths } from "@/lib/geo"
 import { paths } from "@/lib/paths"
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Maps: Interactive Map",
   description:
     "Explore all five proposed walking paths in Wilmington, MA on one interactive map, with trailheads at both ends of every path.",
-  alternates: { canonical: "/maps" },
-}
+  path: "/maps",
+})
 
 function Label({ children }: { children: React.ReactNode }) {
   return (
