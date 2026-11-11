@@ -124,7 +124,7 @@ export default function PlanYourWalkPage() {
               href="/about-contact"
               className="group mt-4 inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-3 text-sm font-medium text-background transition-opacity hover:opacity-90 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
             >
-              Next: How you can help
+              Next: About
               <ArrowRightIcon className="size-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
           </Reveal>
