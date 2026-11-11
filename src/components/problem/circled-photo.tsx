@@ -6,14 +6,18 @@ import { motion, useInView, useReducedMotion } from "motion/react"
 
 /**
  * Vinny's drone shot with red circles where the sidewalk ends, drawn on like
- * someone circling them with a marker. Spots match the circles on the original site.
+ * someone circling them with a marker. Each loop sits on a real gap, checked up close.
  * Coordinates are in the photo's own pixels (1600 x 1200).
  */
 const circles = [
-  { cx: 995, cy: 390, rx: 82, ry: 34, rot: -40 },
-  { cx: 696, cy: 670, rx: 28, ry: 60, rot: -8 },
-  { cx: 773, cy: 755, rx: 36, ry: 88, rot: -8 },
-  { cx: 699, cy: 997, rx: 36, ry: 82, rot: -15 },
+  // past the rail crossing: no sidewalk on the right side, just parking lots and lawn
+  { cx: 945, cy: 376, rx: 88, ry: 26, rot: -33 },
+  // left side by the trees: the trees come right to the road edge
+  { cx: 700, cy: 718, rx: 24, ry: 100, rot: -3 },
+  // right side, in front of the gas station lots: open pavement until the sidewalk starts
+  { cx: 768, cy: 680, rx: 24, ry: 108, rot: -5 },
+  // bottom left: the sidewalk runs out into the bank's parking lot
+  { cx: 724, cy: 1128, rx: 28, ry: 70, rot: -14 },
 ]
 
 // A slightly open, overlapping loop, so it reads as hand-drawn rather than a perfect ellipse

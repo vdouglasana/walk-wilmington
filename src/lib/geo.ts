@@ -25,8 +25,10 @@ export type Basemap = {
 export type ProjectedHub = {
   name: string
   paths: number[]
-  d: string // the hub's shape (a dot, or a stretched pill between two anchors)
-  x: number // label anchor point (middle of the hub)
+  blurb: string
+  here: string[]
+  d: string // the hub's outline
+  x: number // middle of the hub (where the label is measured from)
   y: number
   label: { dx: number; dy: number; anchor: "start" | "middle" | "end" }
 }
@@ -48,8 +50,10 @@ type LngLat = [number, number]
  * coordinates. Uses a simple flat projection, which is fine at town scale:
  * longitude is squeezed by cos(latitude) so distances look right.
  */
-export function projectPaths(width = 520, padding = 30): ProjectedMap {
-  const all = paths.flatMap((p) => [...p.coords, ...p.trailheads.map((t) => t.coord)])
+export function projectPaths(width = 520, padding = 30, withHubs = false): ProjectedMap {
+  const all: LngLat[] = paths.flatMap((p) => [...p.coords, ...p.trailheads.map((t) => t.coord)]) as LngLat[]
+  // the hubs map also needs room for the hub outlines
+  if (withHubs) all.push(...hubs.flatMap((h) => h.outline))
   const lats = all.map((c) => c[1])
   const lngs = all.map((c) => c[0])
   const midLat = (Math.min(...lats) + Math.max(...lats)) / 2
@@ -86,17 +90,24 @@ export function projectPaths(width = 520, padding = 30): ProjectedMap {
     // 1 degree of latitude is about 69 miles
     unitsPerMile: scale / 69,
     hubs: hubs.map((h) => {
-      const pts = h.anchors.map((a) => project(a))
-      const mid = {
-        x: +(pts.reduce((s, p) => s + p.x, 0) / pts.length).toFixed(1),
-        y: +(pts.reduce((s, p) => s + p.y, 0) / pts.length).toFixed(1),
-      }
+      const pts = h.outline.map((a) => project(a))
+      // middle of the shape (area-weighted, so long shapes don't skew it)
+      let A = 0, cx = 0, cy = 0
+      pts.forEach((p, i) => {
+        const q = pts[(i + 1) % pts.length]
+        const c = p.x * q.y - q.x * p.y
+        A += c
+        cx += (p.x + q.x) * c
+        cy += (p.y + q.y) * c
+      })
       return {
         name: h.name,
         paths: h.paths,
-        // a single point becomes a dot (a zero-length line with round caps)
-        d: pts.length > 1 ? pts.map((p, i) => `${i ? "L" : "M"}${p.x} ${p.y}`).join("") : `M${mid.x} ${mid.y}l0.01 0`,
-        ...mid,
+        blurb: h.blurb,
+        here: h.here,
+        d: pts.map((p, i) => `${i ? "L" : "M"}${p.x} ${p.y}`).join("") + "Z",
+        x: +(cx / (3 * A)).toFixed(1),
+        y: +(cy / (3 * A)).toFixed(1),
         label: h.label,
       }
     }),

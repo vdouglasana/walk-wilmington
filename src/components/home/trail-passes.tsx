@@ -12,6 +12,7 @@ import {
 
 import { paths, type WalkPath } from "@/lib/paths"
 import { TopoBackground } from "@/components/topo-background"
+import { SectionCue } from "@/components/section-cue"
 
 export function TrailPasses() {
   return (
@@ -47,6 +48,7 @@ export function TrailPasses() {
           </motion.li>
         ))}
       </ul>
+      <SectionCue />
     </section>
   )
 }
