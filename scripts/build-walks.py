@@ -1,10 +1,13 @@
 """
 Builds src/lib/walks.json for the Plan Your Walk page.
 
-For every pair of places, it finds the best walking route twice on the OpenStreetMap
-street network: once as the town is today, and once with the five proposed paths added.
-"Best" means shortest, but busy roads (state routes, highway=primary/secondary) count as
-three times as long, since most people will go a bit out of their way to avoid them.
+For every pair of places, it finds a walking route twice on the OpenStreetMap street
+network. Today: simply the shortest walk, since that's what people do now. With the
+paths: the five proposed paths are added, and the route is the one most people would
+pick once they exist: the shortest, but with busy roads (state routes, highway=primary or
+secondary) counted as one and a half times as long, since most people will go a little out
+of their way to use a path instead of walking along one. If a route barely touches the
+paths, it's treated as the same walk as today.
 Run with: python3 scripts/build-walks.py   (needs data/osm-raw.json, which is gitignored)
 """
 import json, math, heapq
@@ -13,7 +16,7 @@ M_PER_DEG = 111320.0
 K = math.cos(math.radians(42.55))
 BUSY = {"primary", "primary_link", "secondary", "secondary_link", "trunk", "trunk_link"}
 SKIP = {"motorway", "motorway_link"}
-BUSY_PENALTY = 3.0
+BUSY_PENALTY = 1.5
 
 def dist(a, b):
     dx = (a[0] - b[0]) * K * M_PER_DEG
@@ -22,15 +25,25 @@ def dist(a, b):
 
 PLACES = [
     {"id": "nw-station", "name": "North Wilmington train stop", "hub": "North Wilmington", "c": [-71.15967, 42.56965]},
+    {"id": "elias", "name": "Elia's grocery store", "hub": "North Wilmington", "c": [-71.15859, 42.56916]},
+    {"id": "rmv", "name": "RMV office", "hub": "North Wilmington", "c": [-71.15940, 42.56775]},
+    {"id": "whitefield", "name": "Whitefield ball field", "hub": "North Wilmington", "c": [-71.16090, 42.56722]},
+    {"id": "market-basket", "name": "Market Basket", "hub": "Wilmington Crossing", "c": [-71.17833, 42.55535]},
+    {"id": "cvs", "name": "CVS", "hub": "Wilmington Crossing", "c": [-71.18065, 42.55655]},
+    {"id": "ristuccia", "name": "Ristuccia ice arena", "hub": "Wilmington Crossing", "c": [-71.17899, 42.55818]},
     {"id": "high-school", "name": "Wilmington High School", "hub": "Center", "c": [-71.16362, 42.55513]},
     {"id": "library", "name": "Memorial Library", "hub": "Center", "c": [-71.16399, 42.55753]},
     {"id": "common", "name": "Town Common", "hub": "Center", "c": [-71.16637, 42.55629]},
-    {"id": "market-basket", "name": "Market Basket", "hub": "Wilmington Crossing", "c": [-71.17833, 42.55535]},
+    {"id": "scanlon", "name": "Dick Scanlon Field", "hub": "Center", "c": [-71.16426, 42.55478]},
+    {"id": "rotary-park", "name": "Rotary Park trails", "hub": "Rotary Park", "c": [-71.170972, 42.549863]},
     {"id": "station", "name": "Wilmington train station", "hub": "Center Crossroads", "c": [-71.17441, 42.54685]},
-    {"id": "rotary-park", "name": "Rotary Park trails", "hub": "Center Crossroads", "c": [-71.171014, 42.546503]},
+    {"id": "post-office", "name": "Post office", "hub": "Center Crossroads", "c": [-71.17297, 42.54780]},
     {"id": "yentile", "name": "Yentile Farm", "hub": "Yentile Area", "c": [-71.160888, 42.540196]},
+    {"id": "colonial-park", "name": "Colonial Park Mall", "hub": "Yentile Area", "c": [-71.16558, 42.54136]},
     {"id": "mckinnons", "name": "McKinnon's Market", "hub": "Southern Commercial Area", "c": [-71.14829, 42.53843]},
-    {"id": "west-st", "name": "West Street", "hub": "West St. Cluster", "c": [-71.13829, 42.53905]},
+    {"id": "legion", "name": "American Legion hall", "hub": "Southern Commercial Area", "c": [-71.15328, 42.54070]},
+    {"id": "windsor", "name": "Windsor Place", "hub": "West St. Cluster", "c": [-71.13829, 42.53905]},
+    {"id": "burger-king", "name": "Burger King", "hub": "West St. Cluster", "c": [-71.14190, 42.53941]},
 ]
 
 raw = json.load(open("data/osm-raw.json"))
@@ -88,7 +101,7 @@ for line in geo["lines"]:
         if k in (0, len(ids) - 1) and d < 200 or d < 30:
             add_edge(adj_paths, nid, r, "street")
 
-def route(adj, src, dst):
+def route(adj, src, dst, penalty):
     cost = {src: 0.0}
     prev = {}
     pq = [(0.0, src)]
@@ -99,7 +112,7 @@ def route(adj, src, dst):
         if c > cost.get(u, 1e18):
             continue
         for v, d, kind in adj.get(u, []):
-            nc = c + d * (BUSY_PENALTY if kind == "busy" else 1)
+            nc = c + d * (penalty if kind == "busy" else 1)
             if nc < cost.get(v, 1e18):
                 cost[v] = nc
                 prev[v] = (u, kind, d)
@@ -115,7 +128,7 @@ def route(adj, src, dst):
     steps.reverse()
     return steps
 
-def simplify(pts, tol=4.0):
+def simplify(pts, tol=6.0):
     if len(pts) < 3:
         return pts
     a, b = pts[0], pts[-1]
@@ -177,10 +190,13 @@ pairs = {}
 for i, a in enumerate(PLACES):
     for b in PLACES[i + 1 :]:
         sa, sb = snaps[a["id"]], snaps[b["id"]]
-        today = route(adj_road, sa, sb)
-        withp = route(adj_paths, sa, sb)
+        today = route(adj_road, sa, sb, 1.0)
+        withp = route(adj_paths, sa, sb, BUSY_PENALTY)
         t = summarize(today, a["c"], b["c"], sa, sb)
         w = summarize(withp, a["c"], b["c"], sa, sb)
+        # if the paths don't really get used, it's the same walk as today
+        if w["pathMiles"] < 0.05:
+            w = t
         pairs[f'{a["id"]}|{b["id"]}'] = {"today": t, "paths": w}
         print(f'{a["name"]:28} -> {b["name"]:28} today {t["miles"]:.2f} mi (busy {t["busyMiles"]:.2f})  paths {w["miles"]:.2f} mi (busy {w["busyMiles"]:.2f}, on paths {w["pathMiles"]:.2f})')
 

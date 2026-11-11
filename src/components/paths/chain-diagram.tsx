@@ -6,7 +6,8 @@ import { motion, useInView, useReducedMotion } from "motion/react"
 /**
  * "Linking the Five" as a transit-style line map. The paths share hubs, so they snap
  * together into one route: the main line runs North Wilmington to the West St. Cluster,
- * with Main Street and Rotary Park as branches. The one gap (a short sidewalk link
+ * with Main Street and Rotary Park as branches. The Rotary Park Connector runs from
+ * Center Crossroads back up toward the Center, so its branch points that way. The one gap (a short sidewalk link
  * between the Center and Center Crossroads) is drawn dashed.
  *
  * There are two layouts: wide for laptops, tall for phones.
@@ -17,14 +18,14 @@ type Layout = { w: number; h: number; stations: Station[]; lines: Line[]; gapLab
 
 const wide: Layout = {
   w: 1000,
-  h: 300,
+  h: 222,
   stations: [
     { name: "North Wilmington", x: 70, y: 150, lx: 70, ly: 190, anchor: "middle" },
     { name: "Center", x: 300, y: 150, big: true, lx: 300, ly: 194, anchor: "middle" },
     { name: "Wilmington Crossing", x: 160, y: 60, lx: 160, ly: 30, anchor: "middle" },
-    { name: "Center Crossroads", x: 470, y: 150, big: true, lx: 470, ly: 110, anchor: "middle" },
-    { name: "Rotary Park trails", x: 600, y: 240, lx: 600, ly: 280, anchor: "middle" },
-    { name: "Yentile Area", x: 700, y: 150, big: true, lx: 700, ly: 110, anchor: "middle" },
+    { name: "Center Crossroads", x: 470, y: 150, big: true, lx: 470, ly: 194, anchor: "middle" },
+    { name: "Rotary Park trails", x: 385, y: 60, lx: 385, ly: 30, anchor: "middle" },
+    { name: "Yentile Area", x: 700, y: 150, big: true, lx: 700, ly: 194, anchor: "middle" },
     { name: "West St. Cluster", x: 930, y: 150, lx: 930, ly: 190, anchor: "middle" },
   ],
   lines: [
@@ -33,9 +34,9 @@ const wide: Layout = {
     { id: 4, d: "M470 150 L700 150", badge: [585, 150] },
     { id: 5, d: "M700 150 L930 150", badge: [815, 150] },
     { id: 2, d: "M300 150 L300 100 Q300 60 260 60 L160 60", badge: [230, 60] },
-    { id: 3, d: "M470 150 L470 200 Q470 240 510 240 L600 240", badge: [540, 240] },
+    { id: 3, d: "M470 150 L470 100 Q470 60 430 60 L385 60", badge: [470, 112] },
   ],
-  gapLabel: { x: 385, y: 176, anchor: "middle" },
+  gapLabel: { x: 385, y: 128, anchor: "middle" },
 }
 
 const tall: Layout = {
@@ -44,9 +45,9 @@ const tall: Layout = {
   stations: [
     { name: "North Wilmington", x: 170, y: 50, lx: 148, ly: 50, anchor: "end" },
     { name: "Center", x: 170, y: 210, big: true, lx: 146, ly: 210, anchor: "end" },
-    { name: "Wilmington Crossing", x: 282, y: 210, lx: 282, ly: 242, anchor: "middle" },
+    { name: "Wilmington Crossing", x: 282, y: 210, lx: 282, ly: 180, anchor: "middle" },
     { name: "Center Crossroads", x: 170, y: 350, big: true, lx: 146, ly: 350, anchor: "end" },
-    { name: "Rotary Park trails", x: 282, y: 350, lx: 282, ly: 382, anchor: "middle" },
+    { name: "Rotary Park trails", x: 282, y: 288, lx: 282, ly: 258, anchor: "middle" },
     { name: "Yentile Area", x: 170, y: 510, big: true, lx: 146, ly: 510, anchor: "end" },
     { name: "West St. Cluster", x: 170, y: 670, lx: 148, ly: 670, anchor: "end" },
   ],
@@ -56,9 +57,9 @@ const tall: Layout = {
     { id: 4, d: "M170 350 L170 510", badge: [170, 430] },
     { id: 5, d: "M170 510 L170 670", badge: [170, 590] },
     { id: 2, d: "M170 210 L282 210", badge: [226, 210] },
-    { id: 3, d: "M170 350 L282 350", badge: [226, 350] },
+    { id: 3, d: "M170 350 L250 350 Q282 350 282 318 L282 288", badge: [222, 350] },
   ],
-  gapLabel: { x: 186, y: 282, anchor: "start" },
+  gapLabel: { x: 148, y: 280, anchor: "end" },
 }
 
 // the order the lines draw in, like walking the chain
@@ -162,7 +163,7 @@ export function ChainDiagram() {
     <div
       ref={ref}
       role="img"
-      aria-label="Diagram of how the five paths link up. Path 1 runs from North Wilmington to the Center. Path 2 branches from the Center to Wilmington Crossing. A short sidewalk link joins the Center to Center Crossroads. Path 3 branches from Center Crossroads to the Rotary Park trails. Path 4 runs from Center Crossroads to the Yentile Area, and Path 5 from the Yentile Area to the West St. Cluster."
+      aria-label="Diagram of how the five paths link up. Path 1 runs from North Wilmington to the Center. Path 2 branches from the Center to Wilmington Crossing. A short sidewalk link joins the Center to Center Crossroads. Path 3 branches from Center Crossroads back toward the Center, ending at the Rotary Park trails. Path 4 runs from Center Crossroads to the Yentile Area, and Path 5 from the Yentile Area to the West St. Cluster."
     >
       <Diagram layout={wide} show={show} reduce={reduce} className="hidden h-auto w-full md:block" />
       <Diagram layout={tall} show={show} reduce={reduce} className="mx-auto block h-auto w-full max-w-[360px] md:hidden" />

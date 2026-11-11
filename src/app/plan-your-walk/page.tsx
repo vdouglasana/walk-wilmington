@@ -107,9 +107,14 @@ export default function PlanYourWalkPage() {
               paths&rdquo; version adds the five proposed paths, joined to the streets wherever they meet.
             </p>
             <p>
-              Each walk is the shortest one, except that a stretch along a busy road (like Main Street,
-              Route 62, or Route 129) counts as {data.busyPenalty} times as long. Most people would go a little out of
-              their way to stay off a busy road, so sometimes the calmer walk is a bit longer.
+              &ldquo;Today&rdquo; is simply the shortest walk, because that&apos;s what people do now, even when
+              it means walking along Main Street or Route 62.
+            </p>
+            <p>
+              &ldquo;With the paths&rdquo; is the walk most people would pick once the paths exist: the shortest
+              one, but with a stretch along a busy road counting as {data.busyPenalty} times as long. People will go a
+              little out of their way to walk on a path instead of beside traffic, so sometimes this walk is a
+              bit longer, but calmer.
             </p>
             <p>
               Times use the same pace as the rest of the site, about 20 minutes per mile. These are

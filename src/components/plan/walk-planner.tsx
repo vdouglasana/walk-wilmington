@@ -20,11 +20,11 @@ const ns = { vectorEffect: "non-scaling-stroke" as const }
 const mins = (mi: number) => Math.round(mi * MIN_PER_MILE)
 
 const PRESETS = [
+  { label: "Whitefield to the high school", from: "whitefield", to: "high-school" },
   { label: "Train to the library", from: "nw-station", to: "library" },
-  { label: "School to Market Basket", from: "high-school", to: "market-basket" },
-  { label: "Town Common to Rotary Park", from: "common", to: "rotary-park" },
-  { label: "North Wilmington to the high school", from: "nw-station", to: "high-school" },
-  { label: "Yentile Farm to McKinnon's", from: "yentile", to: "mckinnons" },
+  { label: "Ice arena to the post office", from: "ristuccia", to: "post-office" },
+  { label: "Market Basket to Rotary Park", from: "market-basket", to: "rotary-park" },
+  { label: "CVS to the post office", from: "cvs", to: "post-office" },
 ]
 
 /** One plain-language sentence about what the paths change for this trip */
@@ -41,8 +41,8 @@ function verdict(t: Route, p: Route) {
 }
 
 export function WalkPlanner({ map, places, trips }: { map: ProjectedMap; places: Place[]; trips: Record<string, Trip> }) {
-  const [from, setFrom] = useState("nw-station")
-  const [to, setTo] = useState("library")
+  const [from, setFrom] = useState("whitefield")
+  const [to, setTo] = useState("high-school")
   const [view, setView] = useState<"paths" | "today">("paths")
   const [copied, setCopied] = useState(false)
   const reduce = useReducedMotion()
