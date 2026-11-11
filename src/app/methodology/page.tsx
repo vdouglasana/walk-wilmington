@@ -116,7 +116,7 @@ export default function MethodologyPage() {
             <Reveal delay={0.08}>
               <p className="text-lg text-pretty text-muted-foreground">
                 The biggest elevation change on any path is about 43 feet, spread over 2 miles on the
-                Yentile-East Path. The rest change by 23 feet or less. Wilmington is flat enough that
+                Yentile-East Path. The rest change by about 24 feet or less. Wilmington is flat enough that
                 hills aren&apos;t the problem, allowing for geographic peace of mind when it comes to
                 actual path planning.
               </p>
