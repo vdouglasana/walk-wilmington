@@ -16,7 +16,7 @@ import { SectionCue } from "@/components/section-cue"
 
 export function TrailPasses() {
   return (
-    <section aria-labelledby="passes" className="grain relative isolate overflow-hidden bg-paper py-20 sm:py-28">
+    <section aria-labelledby="passes" className="grain relative isolate overflow-hidden bg-paper pt-20 pb-8 sm:pt-28 sm:pb-10">
       <TopoBackground className="absolute inset-0 -z-10 h-full w-full [mask-image:radial-gradient(ellipse_at_center,black_45%,transparent_95%)]" />
       <div className="container-page flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="max-w-2xl">

@@ -95,8 +95,8 @@ export default function TheProblemPage() {
       </section>
 
       {/* 2. A network that isn't a network: Vinny's circled drone shot */}
-      <section className="grain relative bg-band">
-        <div className="container-page grid gap-12 py-20 sm:py-28 md:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] md:items-center md:gap-16">
+      <section className="grain bg-band">
+        <div className="container-page grid gap-12 pt-20 sm:pt-28 md:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] md:items-center md:gap-16">
           <Reveal>
             <figure>
               <CircledPhoto />
@@ -121,11 +121,11 @@ export default function TheProblemPage() {
             </p>
           </Reveal>
         </div>
-        <SectionCue />
+        <SectionCue className="pb-8 sm:pb-10" />
       </section>
 
       {/* 3. Wilmington's hubs */}
-      <section className="container-page relative py-20 sm:py-28">
+      <section className="container-page pt-20 pb-8 sm:pt-28 sm:pb-10">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <Reveal className="max-w-3xl">
             <Label>Wilmington&apos;s Hubs</Label>
