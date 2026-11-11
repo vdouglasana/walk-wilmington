@@ -36,7 +36,6 @@ export function HubsMap({ map }: { map: ProjectedMap }) {
   // `picked` is the hub in the card; `hover` only lights it up on the map
   const [hover, setHover] = useState<string | null>(null)
   const [index, setIndex] = useState(0)
-  const [toured, setToured] = useState(false)
   const picked = map.hubs[index]?.name ?? ""
   const shown = hover ?? picked
   const focus = map.hubs.find((h) => h.name === shown)
@@ -44,11 +43,9 @@ export function HubsMap({ map }: { map: ProjectedMap }) {
   const pick = (name: string) => {
     const i = map.hubs.findIndex((h) => h.name === name)
     if (i >= 0) setIndex(i)
-    setToured(true)
   }
   const step = (by: number) => {
     setIndex((i) => (i + by + map.hubs.length) % map.hubs.length)
-    setToured(true)
   }
   const last = index === map.hubs.length - 1
 
@@ -121,10 +118,6 @@ export function HubsMap({ map }: { map: ProjectedMap }) {
               onClick={() => step(1)}
               className="group relative inline-flex items-center gap-1.5 rounded-full bg-foreground px-4 py-2 text-sm font-medium text-background transition-opacity hover:opacity-90 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
             >
-              {/* a soft pulse until someone starts the tour */}
-              {!toured && (
-                <span aria-hidden className="absolute inset-0 animate-ping rounded-full bg-foreground/30 [animation-duration:1.8s] motion-reduce:hidden" />
-              )}
               <span className="relative">{last ? "Start over" : "Next hub"}</span>
               <ArrowRightIcon className="relative size-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
             </button>

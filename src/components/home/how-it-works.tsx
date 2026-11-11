@@ -156,10 +156,6 @@ export function HowItWorks({ map }: { map: ProjectedMap }) {
                     exit={{ opacity: 0 }}
                     className="pointer-events-none absolute top-2.5 left-2.5 flex items-center gap-1.5 rounded-full bg-foreground px-3 py-1.5 text-xs font-medium text-background shadow-md"
                   >
-                    {/* same soft pulse as the "Next hub" button, until someone uses the map */}
-                    {!interacted && (
-                      <span aria-hidden className="absolute inset-0 animate-ping rounded-full bg-foreground/30 [animation-duration:1.8s] motion-reduce:hidden" />
-                    )}
                     <MousePointerClickIcon className="relative size-3.5" />
                     <span className="relative">Hover or tap a path to explore</span>
                   </motion.span>
