@@ -20,9 +20,13 @@ export function SectionCue({ className, tone = "dark" }: { className?: string; t
   const reduce = useReducedMotion()
 
   const go = () => {
-    const next = ref.current?.closest("section")?.nextElementSibling as HTMLElement | null
+    // the next section on the page (skipping things like a sticky nav in between)
+    let next = ref.current?.closest("section")?.nextElementSibling as HTMLElement | null
+    while (next && next.tagName !== "SECTION") next = next.nextElementSibling as HTMLElement | null
     if (!next) return
-    if (lenis) lenis.scrollTo(next, { offset: -56, immediate: !!reduce })
+    // land just under the header (or under a sticky bar, if the section sets scroll-margin-top)
+    const offset = -(parseFloat(getComputedStyle(next).scrollMarginTop) || 56)
+    if (lenis) lenis.scrollTo(next, { offset, immediate: !!reduce })
     else next.scrollIntoView({ behavior: reduce ? "auto" : "smooth" })
   }
 

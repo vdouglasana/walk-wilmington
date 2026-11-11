@@ -62,11 +62,12 @@ export function PathJumpBar({ items }: { items: Item[] }) {
                 href={`#${i.slug}`}
                 onClick={(e) => go(e, i.slug)}
                 aria-current={on ? "location" : undefined}
+                style={{ "--c": `var(--path-${i.id})` } as React.CSSProperties}
                 className={cn(
                   "flex items-center gap-2 rounded-full border py-1 pr-3 pl-1 text-sm whitespace-nowrap transition-colors focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none",
                   on
-                    ? "border-foreground/80 bg-card text-foreground"
-                    : "border-transparent text-muted-foreground hover:bg-card hover:text-foreground"
+                    ? "border-[var(--c)] bg-[color-mix(in_oklch,var(--c)_18%,var(--background))] font-medium text-foreground"
+                    : "border-transparent text-muted-foreground hover:bg-[color-mix(in_oklch,var(--c)_10%,var(--background))] hover:text-foreground"
                 )}
               >
                 <PathBadge id={i.id} className="size-5 text-[10px]" />

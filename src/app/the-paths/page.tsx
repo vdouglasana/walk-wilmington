@@ -5,6 +5,7 @@ import { ArrowRightIcon, ConstructionIcon, MapIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Reveal } from "@/components/reveal"
+import { SectionCue } from "@/components/section-cue"
 import { PathBadge } from "@/components/paths/path-badge"
 import { PathJumpBar } from "@/components/paths/jump-bar"
 import { LengthStrip } from "@/components/paths/length-strip"
@@ -42,7 +43,7 @@ function Label({ children }: { children: React.ReactNode }) {
 
 function Stat({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="bg-background p-4">
+    <div className="bg-card p-4">
       <dt className="field-label">{label}</dt>
       <dd className="mt-1.5 text-2xl font-semibold tracking-[-0.03em] tabular-nums">{children}</dd>
     </div>
@@ -53,20 +54,37 @@ function Unit({ children }: { children: React.ReactNode }) {
   return <span className="ml-1 text-sm font-normal text-muted-foreground">{children}</span>
 }
 
-/** One path: the facts on one side, Vinny's Google Earth drawing on the other */
+/** One path: the facts on one side, Vinny's Google Earth drawing on the other, all in the path's color */
 function PathChapter({ p, map, flip }: { p: WalkPath; map: ProjectedMap; flip: boolean }) {
+  // readable version of the path color for small marks (yellow is too light on its own)
+  const ink = "color-mix(in oklch, var(--c) 70%, var(--foreground))"
   return (
     <section
       id={p.slug}
       aria-labelledby={`${p.slug}-title`}
-      className={cn("scroll-mt-28", flip && "grain bg-paper")}
+      style={{ "--c": `var(--path-${p.id})` } as React.CSSProperties}
+      className="grain relative isolate scroll-mt-28 overflow-hidden bg-[color-mix(in_oklch,var(--c)_11%,var(--background))]"
     >
-      <div className="container-page grid gap-10 py-20 sm:py-24 md:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] md:items-start md:gap-14">
+      {/* a stripe of the path's color across the top, like the top of its trail pass */}
+      <div aria-hidden className="h-2 bg-[var(--c)]" />
+
+      {/* the path's number, huge and faint, behind the heading */}
+      <span
+        aria-hidden
+        className={cn(
+          "pointer-events-none absolute top-2 -z-10 font-semibold leading-none tracking-[-0.07em] select-none text-[clamp(11rem,26vw,22rem)] text-[var(--c)] opacity-[0.16]",
+          flip ? "right-2 sm:right-6" : "left-0 sm:left-2"
+        )}
+      >
+        0{p.id}
+      </span>
+
+      <div className="container-page grid gap-10 pt-20 sm:pt-24 md:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] md:items-start md:gap-14">
         {/* the facts */}
         <Reveal className={cn(flip && "md:order-2")}>
           <div className="flex items-center gap-3">
-            <PathBadge id={p.id} className="size-10 text-base" />
-            <span className="field-label">
+            <PathBadge id={p.id} className="size-10 text-base shadow-sm" />
+            <span className="field-label text-foreground/80">
               Path {p.id} of 5 · {p.colorName} on the map
             </span>
           </div>
@@ -76,13 +94,13 @@ function PathChapter({ p, map, flip }: { p: WalkPath; map: ProjectedMap; flip: b
           >
             {p.name}
           </h2>
-          <p className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-lg text-muted-foreground">
-            <span className="text-foreground">{p.from}</span>
-            <ArrowRightIcon className="size-4" aria-label="to" />
-            <span className="text-foreground">{p.to}</span>
+          <p className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-lg">
+            <span>{p.from}</span>
+            <ArrowRightIcon className="size-4" style={{ color: ink }} aria-label="to" />
+            <span>{p.to}</span>
           </p>
 
-          <dl className="mt-7 grid grid-cols-3 gap-px overflow-hidden rounded-xl border border-border bg-border">
+          <dl className="mt-7 grid grid-cols-3 gap-px overflow-hidden rounded-xl border border-t-4 border-border border-t-[var(--c)] bg-border shadow-sm">
             <Stat label="Miles">{p.miles.toFixed(1)}</Stat>
             <Stat label="Minutes">{p.minutes}</Stat>
             <Stat label="Surface">
@@ -96,9 +114,9 @@ function PathChapter({ p, map, flip }: { p: WalkPath; map: ProjectedMap; flip: b
           </div>
 
           {p.inTheWay && (
-            <div className="mt-7 rounded-xl border border-dashed border-foreground/25 bg-card p-4">
+            <div className="mt-7 rounded-xl border-2 border-dashed border-[color-mix(in_oklch,var(--c)_55%,transparent)] bg-card p-4">
               <p className="field-label flex items-center gap-2 text-foreground">
-                <ConstructionIcon className="size-4" aria-hidden />
+                <ConstructionIcon className="size-4" style={{ color: ink }} aria-hidden />
                 What&apos;s in the way
               </p>
               <p className="mt-2 text-sm leading-relaxed text-pretty text-muted-foreground">{p.inTheWay}</p>
@@ -106,21 +124,23 @@ function PathChapter({ p, map, flip }: { p: WalkPath; map: ProjectedMap; flip: b
           )}
         </Reveal>
 
-        {/* the drawing */}
+        {/* the drawing, framed in the path's color */}
         <Reveal delay={0.08} className={cn("md:sticky md:top-36", flip && "md:order-1")}>
           <figure>
-            <div className="relative overflow-hidden rounded-xl bg-muted shadow-[0_20px_50px_-25px_rgb(0_0_0/0.45)] ring-1 ring-border">
-              <Image
-                src={p.image}
-                alt={`Google Earth view of the ${p.name}, drawn as a ${p.colorName.toLowerCase()} line from ${p.from} to ${p.to}, with nearby landmarks labeled.`}
-                width={1400}
-                height={800}
-                sizes="(min-width: 768px) 640px, 100vw"
-                className="h-auto w-full"
-              />
+            <div className="rounded-2xl bg-[var(--c)] p-1.5 shadow-[0_24px_50px_-28px_rgb(0_0_0/0.55)]">
+              <div className="overflow-hidden rounded-[0.7rem] bg-muted">
+                <Image
+                  src={p.image}
+                  alt={`Google Earth view of the ${p.name}, drawn as a ${p.colorName.toLowerCase()} line from ${p.from} to ${p.to}, with nearby landmarks labeled.`}
+                  width={1400}
+                  height={800}
+                  sizes="(min-width: 768px) 640px, 100vw"
+                  className="h-auto w-full"
+                />
+              </div>
             </div>
             <figcaption className="mt-4 flex items-center gap-4">
-              <div className="w-24 shrink-0 rounded-lg map-land p-1.5 ring-1 ring-border sm:w-28">
+              <div className="w-24 shrink-0 rounded-lg bg-card p-1.5 ring-1 ring-border sm:w-28">
                 <PathLocator map={map} id={p.id} className="block h-auto w-full" />
               </div>
               <p className="text-sm text-pretty text-muted-foreground">
@@ -130,6 +150,7 @@ function PathChapter({ p, map, flip }: { p: WalkPath; map: ProjectedMap; flip: b
           </figure>
         </Reveal>
       </div>
+      <SectionCue className="pb-8 sm:pb-10" />
     </section>
   )
 }
@@ -142,10 +163,17 @@ export default function ThePathsPage() {
   return (
     <>
       {/* 1. Intro */}
-      <section className="container-page pt-14 pb-16 sm:pt-20 sm:pb-20">
+      <section className="container-page pt-14 pb-8 sm:pt-20 sm:pb-10">
         <div className="grid gap-10 md:grid-cols-[minmax(0,1.3fr)_minmax(0,0.7fr)] md:items-end md:gap-16">
           <Reveal>
-            <Label>The Paths</Label>
+            <p className="field-label flex items-center gap-2">
+              <span aria-hidden className="flex gap-1">
+                {paths.map((p) => (
+                  <span key={p.id} className="size-2 rounded-full" style={{ background: `var(--path-${p.id})` }} />
+                ))}
+              </span>
+              The Paths
+            </p>
             <h1 className="mt-5 text-[clamp(2.8rem,7vw,5.75rem)] leading-[0.92] font-semibold tracking-[-0.05em] text-balance">
               Five paths. 5.4 miles.{" "}
               <span className="text-muted-foreground">One connected town.</span>
@@ -179,6 +207,7 @@ export default function ThePathsPage() {
             </Stat>
           </dl>
         </Reveal>
+        <SectionCue />
       </section>
 
       {/* 2. Jump between paths */}
