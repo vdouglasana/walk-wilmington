@@ -28,7 +28,7 @@ export const hubs: Hub[] = [
     ],
     paths: [1],
     blurb: "A commuter rail stop with a cluster of everyday errands around it on Middlesex Ave.",
-    here: ["North Wilmington train stop", "RMV office", "Planet Fitness", "Cafes and gas stations", "Whitefield ball field"],
+    here: ["North Wilmington train stop", "Elia's grocery store", "RMV office", "Planet Fitness", "Cafes and gas stations", "Whitefield ball field"],
     label: { dx: 16, dy: -8, anchor: "start" },
   },
   {
@@ -41,8 +41,8 @@ export const hubs: Hub[] = [
       [-71.182123, 42.555884], [-71.182644, 42.557127],
     ],
     paths: [2],
-    blurb: "The town's biggest shopping plazas, lined up along Main Street (Route 38).",
-    here: ["Market Basket", "CVS", "Panera and Starbucks", "Banks", "Ristuccia ice arena"],
+    blurb: "The town's biggest shopping stretch, lined up along Main Street (Route 38). Groceries, stores, and services all in one place.",
+    here: ["Market Basket", "TJ Maxx, Savers, Dollar Tree", "CVS", "Dentist and barbershop", "Banks and restaurants", "Ristuccia ice arena"],
     label: { dx: 4, dy: -40, anchor: "middle" },
   },
   {
@@ -52,8 +52,8 @@ export const hubs: Hub[] = [
       [-71.160978, 42.556555], [-71.163093, 42.553133], [-71.166595, 42.554454],
     ],
     paths: [1, 2],
-    blurb: "Where the town's public life happens: the high school, the library, and the Town Common.",
-    here: ["Wilmington High School", "Memorial Library", "Town Common", "Swain Green"],
+    blurb: "Where the town's public life happens: the high school, the new Town Hall, the library, and fields and courts that the whole town uses, not just students.",
+    here: ["Wilmington High School", "New Town Hall", "Memorial Library", "Town Common", "Sports fields and courts"],
     label: { dx: 0, dy: -30, anchor: "middle" },
   },
   {
@@ -75,8 +75,8 @@ export const hubs: Hub[] = [
       [-71.164529, 42.540913], [-71.165438, 42.538542],
     ],
     paths: [4, 5],
-    blurb: "Shops and car services on Main Street, next door to Yentile Farm's fields and trails.",
-    here: ["Colonial Park Mall", "Auto dealers and repair", "Coffee and donuts", "Yentile Farm next door"],
+    blurb: "Home of the Yentile Farm Recreational Facility, with shops and car services along Main Street.",
+    here: ["Yentile Farm Recreational Facility", "Colonial Park Mall", "Auto dealers and repair", "Coffee and donuts"],
     label: { dx: -24, dy: 14, anchor: "end" },
   },
   {
@@ -100,7 +100,7 @@ export const hubs: Hub[] = [
     ],
     paths: [5],
     blurb: "The last stop before the I-93 interchange, where the path has to end.",
-    here: ["Windsor Place senior living", "Fast food and gas", "I-93 on-ramp"],
+    here: ["Windsor Place senior living", "Restaurants", "Fast food and gas"],
     label: { dx: 16, dy: -22, anchor: "end" },
   },
 ]

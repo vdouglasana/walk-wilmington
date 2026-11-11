@@ -1,8 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { AnimatePresence, motion } from "motion/react"
-import { MousePointerClickIcon } from "lucide-react"
+import { motion } from "motion/react"
+import { ArrowLeftIcon, ArrowRightIcon, MousePointerClickIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import type { ProjectedMap } from "@/lib/geo"
@@ -33,49 +33,102 @@ function PathChips({ paths }: { paths: number[] }) {
  * list) to see what's there and which paths reach it.
  */
 export function HubsMap({ map }: { map: ProjectedMap }) {
-  // `hover` follows the mouse; `picked` sticks after a click so the details stay put
+  // `picked` is the hub in the card; `hover` only lights it up on the map
   const [hover, setHover] = useState<string | null>(null)
-  const [picked, setPicked] = useState<string>(map.hubs[0]?.name ?? "")
+  const [index, setIndex] = useState(0)
+  const [toured, setToured] = useState(false)
+  const picked = map.hubs[index]?.name ?? ""
   const shown = hover ?? picked
-  const info = map.hubs.find((h) => h.name === shown)
-  const focus = hover ? map.hubs.find((h) => h.name === hover) : undefined
+  const focus = map.hubs.find((h) => h.name === shown)
   const lit = (pathId: number) => !focus || focus.paths.includes(pathId)
-  const pick = (name: string) => setPicked(name)
+  const pick = (name: string) => {
+    const i = map.hubs.findIndex((h) => h.name === name)
+    if (i >= 0) setIndex(i)
+    setToured(true)
+  }
+  const step = (by: number) => {
+    setIndex((i) => (i + by + map.hubs.length) % map.hubs.length)
+    setToured(true)
+  }
+  const last = index === map.hubs.length - 1
 
   return (
     <div className="grid gap-6 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] md:items-start md:gap-10">
       <div className="order-2 md:order-1">
-        {/* what's in the hub being looked at */}
-        <div className="relative min-h-[13.5rem] overflow-hidden rounded-xl border border-border bg-card p-5 sm:min-h-[12.5rem]">
-          <AnimatePresence mode="wait" initial={false}>
-            {info && (
-              <motion.div
-                key={info.name}
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -4 }}
-                transition={{ duration: 0.18 }}
-                aria-live="polite"
-              >
-                <div className="flex items-center justify-between gap-3">
-                  <h3 className="flex items-center gap-2 text-lg font-semibold tracking-[-0.02em]">
-                    <span aria-hidden className="size-2.5 rounded-full" style={{ background: HUB_RED }} />
-                    {info.name}
-                  </h3>
-                  <PathChips paths={info.paths} />
+        {/* what's in the hub being looked at. Every hub's details sit in the same spot and
+            only one is visible, so the card is always as tall as the longest one and the
+            list below never moves. */}
+        <div className="rounded-xl border border-border bg-card p-5">
+          <div className="flex items-center justify-between gap-3">
+            <p className="field-label">
+              Hub {index + 1} of {map.hubs.length}
+            </p>
+            <div className="flex gap-1" aria-hidden>
+              {map.hubs.map((h, i) => (
+                <span
+                  key={h.name}
+                  className={cn("h-1 w-4 rounded-full transition-colors", i <= index ? "bg-[#e5533f]" : "bg-border")}
+                />
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-3 grid" aria-live="polite">
+            {map.hubs.map((h) => {
+              const on = h.name === picked
+              return (
+                <div
+                  key={h.name}
+                  aria-hidden={!on}
+                  className={cn(
+                    "col-start-1 row-start-1 transition-[opacity,translate] duration-200",
+                    on ? "visible translate-y-0 opacity-100" : "invisible translate-y-1 opacity-0"
+                  )}
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <h3 className="flex items-center gap-2 text-lg font-semibold tracking-[-0.02em]">
+                      <span aria-hidden className="size-2.5 rounded-full" style={{ background: HUB_RED }} />
+                      {h.name}
+                    </h3>
+                    <PathChips paths={h.paths} />
+                  </div>
+                  <p className="mt-2 text-sm text-pretty text-muted-foreground">{h.blurb}</p>
+                  <p className="field-label mt-4">What&apos;s here</p>
+                  <ul className="mt-2 flex flex-wrap gap-1.5">
+                    {h.here.map((item) => (
+                      <li key={item} className="rounded-md border border-border bg-background px-2 py-1 font-mono text-[11px]">
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <p className="mt-2 text-sm text-pretty text-muted-foreground">{info.blurb}</p>
-                <p className="field-label mt-4">What&apos;s here</p>
-                <ul className="mt-2 flex flex-wrap gap-1.5">
-                  {info.here.map((item) => (
-                    <li key={item} className="rounded-md border border-border bg-background px-2 py-1 font-mono text-[11px]">
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
-            )}
-          </AnimatePresence>
+              )
+            })}
+          </div>
+
+          {/* step through the hubs */}
+          <div className="mt-5 flex items-center justify-between gap-3 border-t border-border pt-4">
+            <button
+              type="button"
+              onClick={() => step(-1)}
+              className="inline-flex items-center gap-1.5 rounded-full px-2 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+            >
+              <ArrowLeftIcon className="size-4" aria-hidden />
+              Back
+            </button>
+            <button
+              type="button"
+              onClick={() => step(1)}
+              className="group relative inline-flex items-center gap-1.5 rounded-full bg-foreground px-4 py-2 text-sm font-medium text-background transition-opacity hover:opacity-90 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+            >
+              {/* a soft pulse until someone starts the tour */}
+              {!toured && (
+                <span aria-hidden className="absolute inset-0 animate-ping rounded-full bg-foreground/30 [animation-duration:1.8s] motion-reduce:hidden" />
+              )}
+              <span className="relative">{last ? "Start over" : "Next hub"}</span>
+              <ArrowRightIcon className="relative size-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
+            </button>
+          </div>
         </div>
 
         {/* list of hubs */}
@@ -87,20 +140,19 @@ export function HubsMap({ map }: { map: ProjectedMap }) {
                 aria-pressed={picked === h.name}
                 onMouseEnter={() => setHover(h.name)}
                 onMouseLeave={() => setHover(null)}
-                onFocus={() => pick(h.name)}
                 onClick={() => pick(h.name)}
                 className={cn(
                   "flex w-full items-center justify-between gap-3 border-b border-border py-2.5 text-left text-sm transition-colors",
-                  shown === h.name ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+                  picked === h.name ? "text-foreground" : "text-muted-foreground hover:text-foreground"
                 )}
               >
                 <span className="flex items-center gap-2.5">
                   <span
                     aria-hidden
                     className="size-2 rounded-full transition-transform"
-                    style={{ background: HUB_RED, transform: shown === h.name ? "scale(1.6)" : undefined }}
+                    style={{ background: HUB_RED, transform: picked === h.name ? "scale(1.6)" : undefined }}
                   />
-                  <span className="font-medium">{h.name}</span>
+                  <span className={cn(picked === h.name && "font-semibold", "font-medium")}>{h.name}</span>
                 </span>
                 <PathChips paths={h.paths} />
               </button>
@@ -143,9 +195,9 @@ export function HubsMap({ map }: { map: ProjectedMap }) {
                 {...ns}
                 initial={false}
                 animate={{
-                  fillOpacity: on ? 0.32 : focus ? 0.08 : 0.18,
+                  fillOpacity: on ? 0.34 : 0.12,
                   strokeWidth: on ? 3 : 2,
-                  strokeOpacity: !focus || on ? 1 : 0.45,
+                  strokeOpacity: on ? 1 : 0.6,
                 }}
                 fill={HUB_RED}
                 transition={{ duration: 0.2 }}
@@ -166,7 +218,7 @@ export function HubsMap({ map }: { map: ProjectedMap }) {
               dy="0.35em"
               textAnchor={h.label.anchor}
               pointerEvents="none"
-              opacity={!focus || shown === h.name ? 1 : 0.45}
+              opacity={shown === h.name ? 1 : 0.6}
               className="text-[11px] font-semibold tracking-tight"
               fill="var(--foreground)"
               stroke="var(--card)"

@@ -54,10 +54,10 @@ export function Closing() {
             It&apos;s time to Walk, Wilmington!
           </p>
           <Link
-            href="/the-paths"
+            href="/the-problem"
             className="group mt-10 inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-medium text-neutral-900 transition-opacity hover:opacity-90 focus-visible:ring-3 focus-visible:ring-white/50 focus-visible:outline-none"
           >
-            See the five paths
+            Next: The Problem
             <ArrowRightIcon className="size-4 transition-transform group-hover:translate-x-0.5" />
           </Link>
         </div>
