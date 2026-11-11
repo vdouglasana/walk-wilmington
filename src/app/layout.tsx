@@ -8,6 +8,7 @@ import { site } from "@/lib/site"
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { BackToTop } from "@/components/back-to-top"
+import { ScrollCue } from "@/components/scroll-cue"
 import { SmoothScroll } from "@/components/smooth-scroll"
 
 const geistSans = Geist({
@@ -64,6 +65,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             </main>
             <SiteFooter />
             <BackToTop />
+            <ScrollCue />
            </SmoothScroll>
           </MotionConfig>
         </ThemeProvider>

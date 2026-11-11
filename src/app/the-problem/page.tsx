@@ -6,6 +6,8 @@ import { ArrowRightIcon, LandPlotIcon, TreePineIcon, TreesIcon, WavesIcon } from
 import { Reveal } from "@/components/reveal"
 import { HighwayMap } from "@/components/problem/highway-map"
 import { CircledPhoto } from "@/components/problem/circled-photo"
+import { HubsMap } from "@/components/problem/hubs-map"
+import { projectPaths } from "@/lib/geo"
 import { projectTown } from "@/lib/town-map"
 import { totalMiles } from "@/lib/paths"
 
@@ -15,19 +17,6 @@ export const metadata: Metadata = {
     "Wilmington grew up around Routes 38, 62, and 129. See why its sidewalks don't connect and why the town's hubs feel far apart on foot.",
   alternates: { canonical: "/the-problem" },
 }
-
-// The hubs outlined on the Google Earth map, and which proposed paths reach them
-// (taken from the path writeups on The Paths page)
-const hubs = [
-  { name: "North Wilmington", paths: [1] },
-  { name: "Wilmington Crossing", paths: [2] },
-  { name: "Center", paths: [1, 2] },
-  { name: "Center Crossroads", paths: [3, 4] },
-  { name: "Yentile Area", paths: [4, 5] },
-  { name: "West St. Cluster", paths: [5] },
-  { name: "Fordham Industrial Cluster", paths: [] },
-  { name: "Southern Commercial Area", paths: [] },
-]
 
 function Label({ children, id }: { children: React.ReactNode; id?: string }) {
   return (
@@ -43,6 +32,7 @@ function Label({ children, id }: { children: React.ReactNode; id?: string }) {
 
 export default function TheProblemPage() {
   const town = projectTown()
+  const pathsMap = projectPaths()
 
   return (
     <>
@@ -143,62 +133,13 @@ export default function TheProblemPage() {
             </h2>
           </Reveal>
           <Reveal delay={0.08} className="flex items-baseline gap-2">
-            <span className="text-5xl font-semibold tracking-[-0.04em]">{hubs.length}</span>
-            <span className="field-label">hubs outlined</span>
+            <span className="text-5xl font-semibold tracking-[-0.04em]">{pathsMap.hubs.length}</span>
+            <span className="field-label">hubs, one chain of paths</span>
           </Reveal>
         </div>
 
         <Reveal className="mt-10 sm:mt-14">
-          <figure className="@container relative overflow-hidden rounded-xl bg-muted ring-1 ring-border">
-            <Image
-              src="/images/problem-hubs-map.jpg"
-              alt="Aerial Google Earth map of Wilmington with its hubs outlined in red: North Wilmington, Wilmington Crossing, the Center, Center Crossroads, Fordham Industrial Cluster, Yentile Area, Southern Commercial Area, and West St. Cluster"
-              width={1572}
-              height={1033}
-              sizes="(min-width: 1152px) 1088px, 100vw"
-              className="h-auto w-full"
-            />
-            {/* Red label sitting over the Google Earth search bar, like on the original site */}
-            <span className="absolute top-[0.6%] left-[1.2%] flex h-[7.4%] w-[34%] items-center rounded-[0.6cqw] bg-[#e5533f] px-[1.4cqw] text-[2.6cqw] font-semibold tracking-tight text-white shadow-md">
-              Wilmington&apos;s Hubs
-            </span>
-          </figure>
-        </Reveal>
-
-        {/* Which hubs the proposed paths reach */}
-        <Reveal className="mt-8">
-          <ul className="flex flex-wrap gap-2">
-            {hubs.map((h) => (
-              <li
-                key={h.name}
-                className="flex items-center gap-2 rounded-full border border-border bg-card py-1.5 pr-3 pl-2 text-sm"
-              >
-                <span
-                  aria-hidden
-                  className={h.paths.length ? "size-2.5 rounded-full bg-brand-green" : "size-2.5 rounded-full border border-muted-foreground/50"}
-                />
-                {h.name}
-                {h.paths.length > 0 && (
-                  <span className="flex gap-0.5">
-                    {h.paths.map((p) => (
-                      <span
-                        key={p}
-                        className="grid size-4 place-items-center rounded-full font-mono text-[9px] font-semibold"
-                        style={{ background: `var(--path-${p})`, color: p === 1 ? "#1a1a1a" : "#fff" }}
-                        title={`Path ${p}`}
-                      >
-                        {p}
-                      </span>
-                    ))}
-                  </span>
-                )}
-              </li>
-            ))}
-          </ul>
-          <p className="mt-3 font-mono text-[11px] text-muted-foreground">
-            <span className="mr-1.5 inline-block size-2 rounded-full bg-brand-green align-middle" />
-            Reached by a proposed path (numbers show which ones)
-          </p>
+          <HubsMap map={pathsMap} />
         </Reveal>
       </section>
 

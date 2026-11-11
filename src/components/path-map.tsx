@@ -18,6 +18,8 @@ type Props = {
   title?: string
   /** The path that's highlighted (others fade back) */
   activeId?: number | null
+  /** Pulse the number badges so people know they can click (until they do) */
+  beckon?: boolean
   /** Called when the mouse moves onto (id) or off (null) a path */
   onHover?: (id: number | null) => void
   /** Called when someone clicks or taps a path. Leave both out for a static map. */
@@ -49,6 +51,7 @@ function MapPath({
   reduce,
   active,
   dimmed,
+  beckon,
 }: {
   p: ProjectedPath
   i: number
@@ -56,6 +59,7 @@ function MapPath({
   reduce: boolean | null
   active: boolean
   dimmed: boolean
+  beckon?: boolean
 }) {
   const start = DRAW_START + i * DRAW_STEP
   const draw = useRange(progress, [start, start + DRAW_LEN], reduce)
@@ -91,6 +95,18 @@ function MapPath({
         style={{ pathLength: draw, opacity: visible }}
       />
       <motion.g style={{ opacity: label }}>
+        {beckon && (
+          <circle
+            cx={p.labelAt.x}
+            cy={p.labelAt.y}
+            r={11}
+            fill="none"
+            stroke={color}
+            strokeWidth={2}
+            className="beacon"
+            style={{ animationDelay: `${i * 0.35}s` }}
+          />
+        )}
         <circle
           cx={p.labelAt.x}
           cy={p.labelAt.y}
@@ -150,7 +166,7 @@ function Trailheads({
  * It never changes, so it's memoized and lives in its own <svg> layer: the browser
  * draws it once instead of redrawing thousands of street lines on every scroll frame.
  */
-const BaseLayer = memo(function BaseLayer({ map }: { map: ProjectedMap }) {
+export const BaseLayer = memo(function BaseLayer({ map }: { map: ProjectedMap }) {
   const b = map.basemap
   const ns = { vectorEffect: "non-scaling-stroke" as const }
   return (
@@ -174,6 +190,7 @@ export function PathMap({
   className,
   title,
   activeId = null,
+  beckon = false,
   onHover,
   onSelect,
 }: Props) {
@@ -216,6 +233,7 @@ export function PathMap({
           reduce={reduce}
           active={p.id === activeId}
           dimmed={activeId != null && p.id !== activeId}
+          beckon={beckon && activeId == null}
         />
       ))}
 

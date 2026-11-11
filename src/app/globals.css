@@ -180,3 +180,18 @@
     @apply mx-auto w-full max-w-6xl px-5 sm:px-8;
   }
 }
+
+/* A soft ring that pulses out from a map badge, like a hotspot, to say "you can click this".
+   Kept outside the layers so the CSS tool never drops it. */
+.beacon {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: beacon 2.4s ease-out infinite;
+}
+@keyframes beacon {
+  0% { transform: scale(1); opacity: 0.55; }
+  70%, 100% { transform: scale(2.3); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .beacon { animation: none; opacity: 0; }
+}

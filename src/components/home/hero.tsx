@@ -27,7 +27,7 @@ export function Hero() {
   return (
     <section
       ref={ref}
-      className="relative -mt-14 h-[100svh] min-h-[560px] overflow-hidden bg-neutral-900 text-white"
+      className="relative -mt-14 h-[94svh] min-h-[560px] overflow-hidden bg-neutral-900 text-white"
     >
       <motion.div
         className="absolute inset-0 origin-bottom will-change-transform"
@@ -55,7 +55,7 @@ export function Hero() {
       />
 
       <motion.div
-        className="container-page relative flex h-full flex-col justify-end pb-10 will-change-transform sm:pb-14"
+        className="container-page relative flex h-full flex-col justify-end pb-24 will-change-transform sm:pb-24"
         style={reduce ? undefined : { y: textY, opacity: textOpacity }}
       >
         <motion.p
@@ -99,17 +99,6 @@ export function Hero() {
             transition={{ duration: 0.7, delay: 1 }}
           >
             <span>42.546° N, 71.174° W</span>
-            <span aria-hidden className="h-px w-8 bg-white/40" />
-            <span className="flex items-center gap-2">
-              Scroll
-              <span className="relative block h-6 w-px overflow-hidden bg-white/25" aria-hidden>
-                <motion.span
-                  className="absolute inset-x-0 top-0 h-1/2 bg-white"
-                  animate={reduce ? undefined : { y: ["-100%", "200%"] }}
-                  transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
-                />
-              </span>
-            </span>
           </motion.div>
         </div>
       </motion.div>

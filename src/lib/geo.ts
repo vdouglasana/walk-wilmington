@@ -1,5 +1,6 @@
 import { paths } from "./paths"
 import basemap from "./basemap.json"
+import { hubs } from "./hubs"
 
 export type ProjectedPath = {
   id: number
@@ -21,7 +22,17 @@ export type Basemap = {
   minor: string
 }
 
+export type ProjectedHub = {
+  name: string
+  paths: number[]
+  d: string // the hub's shape (a dot, or a stretched pill between two anchors)
+  x: number // label anchor point (middle of the hub)
+  y: number
+  label: { dx: number; dy: number; anchor: "start" | "middle" | "end" }
+}
+
 export type ProjectedMap = {
+  hubs: ProjectedHub[]
   width: number
   height: number
   paths: ProjectedPath[]
@@ -74,6 +85,21 @@ export function projectPaths(width = 520, padding = 30): ProjectedMap {
     height,
     // 1 degree of latitude is about 69 miles
     unitsPerMile: scale / 69,
+    hubs: hubs.map((h) => {
+      const pts = h.anchors.map((a) => project(a))
+      const mid = {
+        x: +(pts.reduce((s, p) => s + p.x, 0) / pts.length).toFixed(1),
+        y: +(pts.reduce((s, p) => s + p.y, 0) / pts.length).toFixed(1),
+      }
+      return {
+        name: h.name,
+        paths: h.paths,
+        // a single point becomes a dot (a zero-length line with round caps)
+        d: pts.length > 1 ? pts.map((p, i) => `${i ? "L" : "M"}${p.x} ${p.y}`).join("") : `M${mid.x} ${mid.y}l0.01 0`,
+        ...mid,
+        label: h.label,
+      }
+    }),
     basemap: {
       woods: areas(basemap.woods),
       parks: areas(basemap.parks),

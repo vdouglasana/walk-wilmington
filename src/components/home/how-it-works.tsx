@@ -63,9 +63,17 @@ export function HowItWorks({ map }: { map: ProjectedMap }) {
   const hover = (id: number | null) => {
     if (hideTimer.current) clearTimeout(hideTimer.current)
     if (id === null) hideTimer.current = setTimeout(() => setHoverId(null), 200)
-    else setHoverId(id)
+    else {
+      setHoverId(id)
+      setInteracted(true)
+    }
   }
-  const select = (id: number) => setPinnedId((cur) => (cur === id ? null : id))
+  // Once someone has hovered or tapped a path, the badges stop pulsing
+  const [interacted, setInteracted] = useState(false)
+  const select = (id: number) => {
+    setInteracted(true)
+    setPinnedId((cur) => (cur === id ? null : id))
+  }
   const close = () => {
     setPinnedId(null)
     setHoverId(null)
@@ -132,6 +140,7 @@ export function HowItWorks({ map }: { map: ProjectedMap }) {
                 progress={scrollYProgress}
                 className="absolute inset-0 h-full w-full"
                 activeId={activeId}
+                beckon={ready && !interacted && demoId == null}
                 onHover={ready ? hover : undefined}
                 onSelect={ready ? select : undefined}
               />
